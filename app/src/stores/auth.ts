@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   const logout = async () => {
-    return web.post('logout').then(() => {
+    return api.post('logout').then(() => {
       current.value = {
         email: '',
         password: '',
