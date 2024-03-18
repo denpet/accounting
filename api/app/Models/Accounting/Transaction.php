@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    protected $table = 'eden.accounts';
+    protected $table = 'eden.transactions';
     protected $primaryKey = 'id';
-    protected $fillable = ['name', 'type'];
+    protected $fillable = ['date', 'from_account_id', 'to_account_id', 'note', 'amount', 'vat', 'tin', 'official_receipt'];
     public $timestamps = false;
 }

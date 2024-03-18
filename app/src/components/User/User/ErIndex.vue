@@ -1,6 +1,6 @@
 <template>
   <q-table
-    class="q-ma-md ellipsis"
+    class="ellipsis"
     :columns="columns"
     :rows="userStore.index ?? []"
     row-key="user_id"

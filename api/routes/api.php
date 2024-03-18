@@ -33,9 +33,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('countries/options', [CountryController::class, 'options']);
         Route::apiResource('countries', CountryController::class);
     });
-
-    // Route::group(['prefix' => 'users'], function () {
-    //     Route::get('users/options', [UserController::class, 'options']);
-    //     Route::apiResource('users', UserController::class);
-    // });
 });

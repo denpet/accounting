@@ -8,11 +8,10 @@ use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Throwable;
 
 class RestController extends Controller
 {
-    use AuthorizesRequests, ValidatesRequests;
-
     protected static $model;
     protected static $validations = [];
     protected static $indexColumns = [];
@@ -61,7 +60,6 @@ class RestController extends Controller
      */
     public function index()
     {
-        Log::debug(">>index");
         $response = [];
 
         $query = static::$model::with(static::$with)
@@ -174,7 +172,15 @@ class RestController extends Controller
 
     public function update($id)
     {
-        $data = Request::validate(static::$validations);
+        Log::debug(">>update($id)");
+        Log::debug(Request::all());
+        try {
+            $data = Request::validate(static::$validations);
+        } catch (Throwable $e) {
+            Log::debug($e->getMessage());
+            throw $e;
+        }
+        Log::debug($data);
         $row = static::$model::find($id);
         if (!$row) {
             throw new NotFoundHttpException();

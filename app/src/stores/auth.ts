@@ -24,7 +24,6 @@ export const useAuthStore = defineStore('auth', () => {
   const errors: Ref<AuthError> = ref({})
 
   const user = async () => {
-    await web.get('/sanctum/csrf-cookie')
     api.get('user').then((response) => {
       current.value = response.data
     })

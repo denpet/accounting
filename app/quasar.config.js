@@ -86,7 +86,7 @@ module.exports = configure(function (ctx) {
         }
       },
       env: {
-        API: process.env.API_URL ?? 'http://localhost:8000',
+        API: process.env.API_URL ?? 'http://localhost:8080',
       },
     },
 
@@ -97,12 +97,12 @@ module.exports = configure(function (ctx) {
       },
       port: 8080,
       open: true, // opens browser window automatically
-      // proxy: {
-      //   '/api': 'http://127.0.0.1:8000',
-      //   '/login': 'http://127.0.0.1:8000',
-      //   '/logout': 'http://127.0.0.1:8000',
-      //   '/sanctum': 'http://127.0.0.1:8000',
-      // },
+      proxy: {
+        '/api': 'http://127.0.0.1:8000',
+        '/login': 'http://127.0.0.1:8000',
+        '/logout': 'http://127.0.0.1:8000',
+        '/sanctum': 'http://127.0.0.1:8000',
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-webpack/quasar-config-js#Property%3A-framework

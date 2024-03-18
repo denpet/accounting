@@ -1,9 +1,9 @@
 <template>
   <q-table
-    class="q-ma-md ellipsis"
+    class="ellipsis"
     :columns="columns"
     :rows="countryStore.index ?? []"
-    row-key="country"
+    row-key="id"
     :rows-per-page-options="[0]"
     dense
   >
@@ -76,7 +76,7 @@
         </template>
         <ErCountryEdit
           v-else
-          :country-id="body.key"
+          :id="body.key"
           @changed="body.expand = false"
           class="q-mr node"
         />
@@ -98,7 +98,7 @@ countryStore.fetchIndex()
 
 const onCreateCountry = () => countryStore.create()
 
-const onDestroy = (countryId: string) => {
+const onDestroy = (countryId: number) => {
   $q.dialog({
     title: 'Confirm',
     message: 'Are you sure you want to delete the row?',
@@ -111,17 +111,17 @@ const onDestroy = (countryId: string) => {
 
 const columns: QTableColumn[] = [
   {
-    name: 'country',
+    name: 'code',
     label: 'Country',
-    field: 'country',
+    field: 'code',
     align: 'left',
     style: 'width: 5rem',
     sortable: true,
   },
   {
-    name: 'country_name',
+    name: 'name',
     label: 'Country',
-    field: 'country_name',
+    field: 'name',
     align: 'left',
     sortable: true,
   },

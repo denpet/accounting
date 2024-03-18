@@ -4,26 +4,27 @@ import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
 export type CountryObject = {
-  country: string
-  country_name: string
+  id: number
+  code: string
+  name: string
 }
 
 export type CountryErrors = {
   country?: string
-  country_name?: string
+  name?: string
 }
 
 type CountryFilter = {
   country?: string
-  country_name?: string
+  name?: string
 }
 
 export const useGlobalCountryStore = defineStore('global/country', () => {
   const index = ref(null)
   const options = ref(null)
   const filter: Ref<CountryFilter> = ref({})
-  const current: Ref<Map<string, CountryObject>> = ref(new Map())
-  const currentErrors: Ref<Map<string, CountryErrors>> = ref(new Map())
+  const current: Ref<Map<number, CountryObject>> = ref(new Map())
+  const currentErrors: Ref<Map<number, CountryErrors>> = ref(new Map())
   const created: Ref<Map<string, CountryObject>> = ref(new Map())
   const createdErrors: Ref<Map<string, CountryErrors>> = ref(new Map())
 
@@ -69,7 +70,7 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
     }
   }
 
-  const show = async (id: string) => {
+  const show = async (id: number) => {
     return api
       .get(`global/countries/${id}`)
       .then((response) => {
@@ -90,7 +91,7 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
     created.value.set(id, {
       ...{
         country: '',
-        country_name: '',
+        name: '',
       },
       ...prefill,
     })
@@ -118,7 +119,7 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
       })
   }
 
-  const update = async (id: string) => {
+  const update = async (id: number) => {
     return api
       .put(`global/countries/${id}`, current.value.get(id))
       .then(() => {
@@ -132,12 +133,13 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
         })
       })
       .catch((response) => {
+        console.log('response')
         currentErrors.value.set(id, response.response.data.errors)
         throw new Error(response.response.data.message)
       })
   }
 
-  const destroy = async (id: string) => {
+  const destroy = async (id: number) => {
     return api
       .delete(`global/countries/${id}`)
       .then(() => {

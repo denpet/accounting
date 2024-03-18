@@ -1,14 +1,15 @@
 <template>
   <template v-if="country !== undefined">
     <q-td>
-      <q-chip :label="countryId" icon="mdi-identifier" />
+      {{ country.code }}
+      <q-chip :label="id" icon="mdi-identifier" />
     </q-td>
     <q-td>
       <q-input
-        v-model="country.country_name"
+        v-model="country.name"
         label="Name"
-        :error="errors?.country_name !== undefined"
-        :error-message="errors?.country_name?.toString()"
+        :error="errors?.name !== undefined"
+        :error-message="errors?.name?.toString()"
       />
     </q-td>
     <q-td class="q-mt-md">
@@ -34,24 +35,24 @@ const $q = useQuasar()
 const emit = defineEmits(['changed'])
 
 const props = defineProps({
-  countryId: { type: String, default: null },
+  id: { type: Number, default: null },
 })
 
 const countryStore = useGlobalCountryStore()
 
-onMounted(() => countryStore.show(props.countryId))
+onMounted(() => countryStore.show(props.id))
 
 onUnmounted(() => {
-  countryStore.current.delete(props.countryId)
-  countryStore.currentErrors.delete(props.countryId)
+  countryStore.current.delete(props.id)
+  countryStore.currentErrors.delete(props.id)
 })
 
-const country = computed(() => countryStore.current.get(props.countryId))
+const country = computed(() => countryStore.current.get(props.id))
 
-const errors = computed(() => countryStore.currentErrors.get(props.countryId))
+const errors = computed(() => countryStore.currentErrors.get(props.id))
 
 const onSubmit = () => {
-  countryStore.update(props.countryId).then(() => emit('changed'))
+  countryStore.update(props.id).then(() => emit('changed'))
 }
 
 const onDestroy = () => {
@@ -61,7 +62,7 @@ const onDestroy = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    countryStore.destroy(props.countryId).then(() => {
+    countryStore.destroy(props.id).then(() => {
       emit('changed', null)
     })
   })

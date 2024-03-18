@@ -9,10 +9,15 @@ class TransactionController extends RestController
 {
     protected static $model = Transaction::class;
     protected static $validations = [
-        'name' => 'required|string',
-        'type' => 'required|in:A,L,E,I,C'
+        'date' => 'required|date',
+        'from_account_id' => 'required|exists:eden.accounts',
+        'to_account_id' => 'required|exists:eden.accounts',
+        'note' => 'required|string',
+        'amount' => 'required|numeric',
+        'vat' => 'required|numeric',
+        'tin' => 'nullable|string',
+        'official_receipt' => 'nullable|string',
     ];
-    protected static $indexColumns = ['id', 'name', 'type'];
-    protected static $orderBy = ['type', 'name'];
-    protected static $optionColumn = 'name';
+    protected static $indexColumns = ['id', 'date', 'note'];
+    protected static $orderBy = ['date', 'id'];
 }
