@@ -86,7 +86,7 @@ module.exports = configure(function (ctx) {
         }
       },
       env: {
-        API: process.env.API_URL ?? 'http://localhost:8080',
+        API: ctx.prod ? 'https://intranet.eden.ph' : 'http://localhost:8080',
       },
     },
 
