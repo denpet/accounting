@@ -98,10 +98,10 @@ module.exports = configure(function (ctx) {
       port: 8080,
       open: true, // opens browser window automatically
       proxy: {
-        '/api': 'http://127.0.0.1:8000',
-        '/login': 'http://127.0.0.1:8000',
-        '/logout': 'http://127.0.0.1:8000',
-        '/sanctum': 'http://127.0.0.1:8000',
+        '/api': 'http://localhost:8000',
+        '/login': 'http://localhost:8000',
+        '/logout': 'http://localhost:8000',
+        '/sanctum': 'http://localhost:8000',
       },
     },
 
