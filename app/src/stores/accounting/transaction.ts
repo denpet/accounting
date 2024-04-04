@@ -9,7 +9,7 @@ export type TransactionObject = {
   from_account_id: number
   to_account_id: number
   note: string
-  amount: number
+  amount: number | null
   vat: number | null
   tin: string | null
   official_receipt: string | null

@@ -1,5 +1,5 @@
 <template>
-  <q-form @submit="onSubmit" class="q-gutter-md">
+  <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
     <q-input filled v-model="transactionStore.current.date" mask="####-##-##">
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
@@ -17,29 +17,37 @@
         </q-icon>
       </template>
     </q-input>
-    <q-select
-      label="From"
-      v-model="transactionStore.current.from_account_id"
-      :options="fromAccountOptions"
-      map-options
-    />
-    <q-select
-      label="To"
-      v-model="transactionStore.current.to_account_id"
-      :options="toAccountOptions"
-      map-options
-    />
+    <div class="row">
+      <q-select
+        class="col-6 q-pr-xs"
+        label="From"
+        v-model="transactionStore.current.from_account_id"
+        :options="fromAccountOptions"
+        map-options
+      />
+      <q-select
+        label="To"
+        class="col-6"
+        v-model="transactionStore.current.to_account_id"
+        :options="toAccountOptions"
+        map-options
+      />
+    </div>
     <q-input label="Description" v-model="transactionStore.current.note" />
-    <q-input
-      label="Amount"
-      type="number"
-      v-model.number="transactionStore.current.amount"
-    />
-    <q-input
-      label="VAT"
-      type="number"
-      v-model.number="transactionStore.current.vat"
-    />
+    <div class="row">
+      <q-input
+        class="col-6 q-pr-xs"
+        label="Amount"
+        type="number"
+        v-model.number="transactionStore.current.amount"
+      />
+      <q-input
+        label="VAT"
+        type="number"
+        v-model.number="transactionStore.current.vat"
+        class="col-6"
+      />
+    </div>
     <q-input label="TIN" v-model.number="transactionStore.current.tin" />
     <q-input
       label="o.r."
@@ -67,7 +75,7 @@ transactionStore.create(<TransactionObject>{
   from_account_id: 1,
   to_account_id: 12,
   note: '',
-  amount: 0,
+  amount: null,
   vat: null,
   tin: null,
   official_receipt: null,
@@ -87,13 +95,26 @@ const fromAccountOptions = computed(() => {
 const toAccountOptions = computed(() => {
   return accountStore.options.filter((value) => {
     return [
-      9, 10, 11, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 26, 28, 29, 33, 36, 44,
-      45, 48, 49, 50, 51, 53, 54,
+      9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 44, 48, 49, 51, 53, 54,
     ].includes(value.value)
   })
 })
 
 const onSubmit = () => {
   transactionStore.store()
+}
+
+const onReset = () => {
+  transactionStore.create(<TransactionObject>{
+    id: null,
+    date: new Date().toLocaleDateString('sv'),
+    from_account_id: 1,
+    to_account_id: 12,
+    note: '',
+    amount: null,
+    vat: null,
+    tin: null,
+    official_receipt: null,
+  })
 }
 </script>
