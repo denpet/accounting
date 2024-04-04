@@ -53,6 +53,12 @@
       label="o.r."
       v-model.number="transactionStore.current.official_receipt"
     />
+    <q-file
+      name="receipt_image"
+      v-model="transactionStore.current.receipt_image"
+      filled
+      label="Select receipt image"
+    />
     <div>
       <q-btn label="Submit" type="submit" color="primary" />
       <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
