@@ -1,81 +1,99 @@
 <template>
-  <q-tr v-if="account !== undefined">
-    <q-td>
-      <q-btn
-        color="accent"
-        size="sm"
-        round
-        dense
-        icon="mdi-arrow-down"
-        @click="onCancel"
-      />
-    </q-td>
-    <q-td>
-      <q-chip label="New " icon="mdi-identifier" color="orange-6" />
-    </q-td>
-    <q-td>
-      <q-input
-        v-model="account.name"
-        label="Name"
-        :error="errors?.name !== undefined"
-        :error-message="errors?.name?.toString()"
-      />
-    </q-td>
-    <q-td>
-      <q-select
-        v-model="account.type"
-        label="Parent"
-        :options="[
-          { value: 'A', label: 'Asset' },
-          { value: 'L', label: 'Liability' },
-          { value: 'E', label: 'Expenses' },
-          { value: 'I', label: 'Income' },
-          { value: 'C', label: 'Costs?' },
-        ]"
-        map-options
-        emit-value
-        style="width: 100%; max-width: 40vh"
-        clearable
-        :error="errors?.type !== undefined"
-        :error-message="errors?.type?.toString()"
-      />
-    </q-td>
-    <q-td>
-      <q-btn
-        color="positive"
-        icon="mdi-content-save"
-        size="sm"
-        round
-        flat
-        @click="onSubmit"
-      />
-    </q-td>
-  </q-tr>
+  <q-form @submit="onSubmit" class="q-gutter-md">
+    <q-input filled v-model="transactionStore.current.date" mask="####-##-##">
+      <template v-slot:append>
+        <q-icon name="event" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-date
+              v-close-popup
+              v-model="transactionStore.current.date"
+              mask="YYYY-MM-DD"
+            >
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="Close" color="primary" flat />
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+    <q-select
+      label="From"
+      v-model="transactionStore.current.from_account_id"
+      :options="fromAccountOptions"
+      map-options
+    />
+    <q-select
+      label="To"
+      v-model="transactionStore.current.to_account_id"
+      :options="toAccountOptions"
+      map-options
+    />
+    <q-input label="Description" v-model="transactionStore.current.note" />
+    <q-input
+      label="Amount"
+      type="number"
+      v-model.number="transactionStore.current.amount"
+    />
+    <q-input
+      label="VAT"
+      type="number"
+      v-model.number="transactionStore.current.vat"
+    />
+    <q-input label="TIN" v-model.number="transactionStore.current.tin" />
+    <q-input
+      label="o.r."
+      v-model.number="transactionStore.current.official_receipt"
+    />
+    <div>
+      <q-btn label="Submit" type="submit" color="primary" />
+      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+    </div>
+  </q-form>
 </template>
 
 <script setup lang="ts">
-import { useAccountingAccountStore } from 'stores/accounting/transaction'
-import { computed } from 'vue'
+import {
+  useAccountingTransactionStore,
+  TransactionObject,
+} from 'stores/accounting/transaction'
+import { useAccountingAccountStore } from 'stores/accounting/account'
+import { computed, onMounted } from 'vue'
 
-const props = defineProps({
-  id: { type: String, default: '' },
+const transactionStore = useAccountingTransactionStore()
+transactionStore.create(<TransactionObject>{
+  id: null,
+  date: new Date().toLocaleDateString('sv'),
+  from_account_id: 1,
+  to_account_id: 12,
+  note: '',
+  amount: 0,
+  vat: null,
+  tin: null,
+  official_receipt: null,
 })
 
 const accountStore = useAccountingAccountStore()
+onMounted(() => {
+  accountStore.fetchOptions()
+})
 
-const account = computed(() => accountStore.created.get(props.id))
+const fromAccountOptions = computed(() => {
+  return accountStore.options.filter((value) => {
+    return [1, 3].includes(value.value)
+  })
+})
 
-const errors = computed(() => accountStore.createdErrors.get(props.id))
+const toAccountOptions = computed(() => {
+  return accountStore.options.filter((value) => {
+    return [
+      9, 10, 11, 12, 13, 14, 15, 19, 20, 22, 23, 24, 25, 26, 28, 29, 33, 36, 44,
+      45, 48, 49, 50, 51, 53, 54,
+    ].includes(value.value)
+  })
+})
 
 const onSubmit = () => {
-  accountStore.store(props.id).then(() => {
-    accountStore.created.delete(props.id)
-    accountStore.createdErrors.delete(props.id)
-  })
-}
-
-const onCancel = () => {
-  accountStore.created.delete(props.id)
-  accountStore.createdErrors.delete(props.id)
+  transactionStore.store()
 }
 </script>

@@ -23,55 +23,50 @@ type AccountFilter = {
 export const useAccountingAccountStore = defineStore(
   'accounting/account',
   () => {
-    const index = ref(null)
-    const options = ref(null)
+    const index = ref([])
+    const options = ref([])
     const current: Ref<Map<number, AccountObject>> = ref(new Map())
     const currentErrors: Ref<Map<number, AccountErrors>> = ref(new Map())
     const created: Ref<Map<string, AccountObject>> = ref(new Map())
     const createdErrors: Ref<Map<string, AccountErrors>> = ref(new Map())
     const filter: Ref<AccountFilter> = ref({})
 
-    const fetchIndex = async (force = false) => {
-      console.log('>>fetchIndex')
-      if (force || index.value === null) {
-        const urlParams = new URLSearchParams(
-          Object.entries(filter.value).filter((el) => el[1] !== undefined),
-        )
-        return api
-          .get(`accounting/accounts?${urlParams}`)
-          .then((response) => {
-            index.value = response.data.data
+    const fetchIndex = async () => {
+      const urlParams = new URLSearchParams(
+        Object.entries(filter.value).filter((el) => el[1] !== undefined),
+      )
+      return api
+        .get(`accounting/accounts?${urlParams}`)
+        .then((response) => {
+          index.value = response.data.data
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `Error reading. ${error.response?.data}`,
+            type: 'negative',
+            position: 'top-right',
+            progress: true,
           })
-          .catch((error) => {
-            Notify.create({
-              message: `Error reading. ${error.response?.data}`,
-              type: 'negative',
-              position: 'top-right',
-              progress: true,
-            })
-          })
-      }
+        })
     }
 
-    const fetchOptions = async (force = false) => {
-      if (force || options.value === null) {
-        const urlParams = new URLSearchParams(
-          Object.entries(filter.value).filter((el) => el[1] !== undefined),
-        )
-        return api
-          .get(`accounting/accounts/options?${urlParams}`)
-          .then((response) => {
-            options.value = response.data
+    const fetchOptions = async () => {
+      const urlParams = new URLSearchParams(
+        Object.entries(filter.value).filter((el) => el[1] !== undefined),
+      )
+      return api
+        .get(`accounting/accounts/options?${urlParams}`)
+        .then((response) => {
+          options.value = response.data
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `Error reading. ${error.response?.data}`,
+            type: 'negative',
+            position: 'top-right',
+            progress: true,
           })
-          .catch((error) => {
-            Notify.create({
-              message: `Error reading. ${error.response?.data}`,
-              type: 'negative',
-              position: 'top-right',
-              progress: true,
-            })
-          })
-      }
+        })
     }
 
     const show = async (id: number) => {

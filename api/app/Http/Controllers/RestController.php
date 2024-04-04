@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Throwable;
 
 class RestController extends Controller
 {
@@ -172,20 +168,11 @@ class RestController extends Controller
 
     public function update($id)
     {
-        Log::debug(">>update($id)");
-        Log::debug(Request::all());
-        try {
-            $data = Request::validate(static::$validations);
-        } catch (Throwable $e) {
-            Log::debug($e->getMessage());
-            throw $e;
-        }
-        Log::debug($data);
         $row = static::$model::find($id);
         if (!$row) {
             throw new NotFoundHttpException();
         }
-        $row->fill($data)->save();
+        $row->fill(Request::validate(static::$validations))->save();
 
         /* Index row */
         $query = static::$model::with(static::$with)

@@ -36,11 +36,6 @@
         </q-th>
         <q-th />
       </q-tr>
-      <ErCreate
-        v-for="node in transactionStore.created"
-        :key="node[0]"
-        :id="node[0]"
-      />
     </template>
 
     <template #body="body">
@@ -88,7 +83,6 @@
 
 <script setup lang="ts">
 import { useAccountingTransactionStore } from 'stores/accounting/transaction'
-import ErCreate from './ErCreate.vue'
 import ErEdit from './ErEdit.vue'
 import { QTableColumn, useQuasar } from 'quasar'
 

@@ -133,7 +133,6 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
         })
       })
       .catch((response) => {
-        console.log('response')
         currentErrors.value.set(id, response.response.data.errors)
         throw new Error(response.response.data.message)
       })

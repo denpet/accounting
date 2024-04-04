@@ -5,17 +5,18 @@ import { api } from 'boot/axios'
 
 export type TransactionObject = {
   id: number | null
-  date: Date
+  date: string
   from_account_id: number
   to_account_id: number
   note: string
   amount: number
-  vat: number
-  tin: string
-  official_receipt: string
+  vat: number | null
+  tin: string | null
+  official_receipt: string | null
 }
 
 export type TransactionErrors = {
+  message?: string
   id?: string
   date?: string
   from_account_id?: string
@@ -37,16 +38,12 @@ type TransactionFilter = {
 export const useAccountingTransactionStore = defineStore(
   'accounting/transaction',
   () => {
-    const index = ref(null)
-    const options = ref(null)
-    const current: Ref<Map<number, TransactionObject>> = ref(new Map())
-    const currentErrors: Ref<Map<number, TransactionErrors>> = ref(new Map())
-    const created: Ref<Map<string, TransactionObject>> = ref(new Map())
-    const createdErrors: Ref<Map<string, TransactionErrors>> = ref(new Map())
+    const index = ref()
+    const current: Ref<TransactionObject> = ref(<TransactionObject>{})
+    const errors: Ref<TransactionErrors | undefined> = ref()
     const filter: Ref<TransactionFilter> = ref({})
 
     const fetchIndex = async (force = false) => {
-      console.log('>>fetchIndex')
       if (force || index.value === null) {
         const urlParams = new URLSearchParams(
           Object.entries(filter.value).filter((el) => el[1] !== undefined),
@@ -67,32 +64,11 @@ export const useAccountingTransactionStore = defineStore(
       }
     }
 
-    const fetchOptions = async (force = false) => {
-      if (force || options.value === null) {
-        const urlParams = new URLSearchParams(
-          Object.entries(filter.value).filter((el) => el[1] !== undefined),
-        )
-        return api
-          .get(`accounting/transactions/options?${urlParams}`)
-          .then((response) => {
-            options.value = response.data
-          })
-          .catch((error) => {
-            Notify.create({
-              message: `Error reading. ${error.response?.data}`,
-              type: 'negative',
-              position: 'top-right',
-              progress: true,
-            })
-          })
-      }
-    }
-
     const show = async (id: number) => {
       return api
         .get(`accounting/transactions/${id}`)
         .then((response) => {
-          current.value.set(id, response.data)
+          current.value = response.data
         })
         .catch((error) => {
           Notify.create({
@@ -105,26 +81,20 @@ export const useAccountingTransactionStore = defineStore(
     }
 
     const create = (prefill: TransactionObject = <TransactionObject>{}) => {
-      const id = self.crypto.randomUUID()
-      created.value.set(id, {
-        ...{
-          name: '',
-          type: '',
-        },
+      current.value = {
+        ...{ name: '' },
         ...prefill,
-      })
-      return id
+      }
     }
 
-    const store = async (id: string) => {
-      const transaction = created.value.get(id)
+    const store = async () => {
+      const transaction = current.value
       if (!transaction) throw new Error('No transaction')
       return api
         .post('accounting/transactions', transaction)
         .then((response) => {
           transaction.id = response.data.id
           if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
           Notify.create({
             message: 'Stored',
             type: 'positive',
@@ -133,17 +103,16 @@ export const useAccountingTransactionStore = defineStore(
           })
         })
         .catch((response) => {
-          createdErrors.value.set(id, response.response.data.errors)
+          errors.value = response.response.data.errors
           throw new Error(response.response.data.message)
         })
     }
 
     const update = async (id: number) => {
       return api
-        .put(`accounting/transactions/${id}`, current.value.get(id))
+        .put(`accounting/transactions/${id}`, current.value)
         .then(() => {
           if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -152,7 +121,7 @@ export const useAccountingTransactionStore = defineStore(
           })
         })
         .catch((response) => {
-          currentErrors.value.set(id, response.response.data.errors)
+          errors.value = response.response.data.errors
           throw new Error(response.response.data.message)
         })
     }
@@ -162,7 +131,6 @@ export const useAccountingTransactionStore = defineStore(
         .delete(`accounting/transactions/${id}`)
         .then(() => {
           if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -183,7 +151,6 @@ export const useAccountingTransactionStore = defineStore(
 
     return {
       fetchIndex,
-      fetchOptions,
       show,
       create,
       store,
@@ -191,11 +158,8 @@ export const useAccountingTransactionStore = defineStore(
       destroy,
       index,
       filter,
-      options,
       current,
-      currentErrors,
-      created,
-      createdErrors,
+      errors,
     }
   },
 )
