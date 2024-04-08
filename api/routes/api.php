@@ -26,7 +26,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('accounts/options', [AccountController::class, 'options']);
         Route::apiResource('accounts', AccountController::class);
 
-        Route::post('transactions/upload/{id}', [TransactionController::class, 'uploadImage']);
+        Route::post('transactions/upload', [TransactionController::class, 'uploadImage']);
         Route::get('transactions/image/{id}', [TransactionController::class, 'showImage']);
         Route::apiResource('transactions', TransactionController::class);
     });

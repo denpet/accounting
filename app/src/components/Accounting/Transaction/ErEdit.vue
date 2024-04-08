@@ -65,7 +65,7 @@
     />
     <q-uploader
       v-if="transactionStore.current.id"
-      :url="`${uploadApi}/upload/${transactionStore.current.id}`"
+      :factory="uploadFile"
       label="Upload receipts"
       auto-upload
       hide-upload-btn
@@ -88,6 +88,7 @@ import {
 } from 'stores/accounting/transaction'
 import { useAccountingAccountStore } from 'stores/accounting/account'
 import { computed, onMounted } from 'vue'
+import { Cookies } from 'quasar'
 
 const props = defineProps({
   id: { type: Number, default: null },
@@ -150,6 +151,32 @@ const onReset = () => {
     vat: null,
     tin: null,
     official_receipt: null,
+  })
+}
+
+const uploadFile = () => {
+  return new Promise((resolve) => {
+    resolve({
+      url: `${uploadApi}/upload`,
+      headers: [
+        {
+          name: 'Accept',
+          value: 'application/json',
+        },
+        {
+          name: 'X-XSRF-TOKEN',
+          value: Cookies.get('XSRF-TOKEN'),
+        },
+      ],
+      withCredentials: true,
+      fieldName: 'image',
+      formFields: [
+        {
+          name: 'id',
+          value: transactionStore.current.id,
+        },
+      ],
+    })
   })
 }
 </script>

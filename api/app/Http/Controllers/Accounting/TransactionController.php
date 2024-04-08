@@ -72,24 +72,18 @@ class TransactionController extends RestController
     }
 
 
-    public function uploadImage($id)
+    public function uploadImage()
     {
         $data = Request::validate([
-            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg',
+            'id' => 'required|numeric'
         ]);
         $fileNumber = 0;
         do {
             $fileNumber++;
-            $imageName = "{$id}_{$fileNumber}.{$data['image']->extension()}";
+            $imageName = "{$data['id']}_{$fileNumber}.{$data['image']->extension()}";
         } while (file_exists(config('eden.eden_receipt_dir') . "/$imageName"));
-
         $data['image']->move(config('eden.eden_receipt_dir'), $imageName);
-
-        /* Store $imageName name in DATABASE from HERE */
-
-        return back()
-            ->with('success', 'You have successfully upload image.')
-            ->with('image', $imageName);
     }
 
 
