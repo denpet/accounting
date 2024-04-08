@@ -8,6 +8,6 @@ class Transaction extends Model
 {
     protected $table = 'eden.transactions';
     protected $primaryKey = 'id';
-    protected $fillable = ['date', 'from_account_id', 'to_account_id', 'note', 'amount', 'vat', 'tin', 'official_receipt'];
+    protected $fillable = ['id', 'date', 'from_account_id', 'to_account_id', 'note', 'amount', 'vat', 'tin', 'official_receipt'];
     public $timestamps = false;
 }

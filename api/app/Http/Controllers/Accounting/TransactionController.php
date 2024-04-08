@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\RestController;
+use App\Models\Accounting\Account;
 use App\Models\Accounting\Transaction;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class TransactionController extends RestController
@@ -31,6 +33,42 @@ class TransactionController extends RestController
         }
         $result['images'] = $imageUrls;
         return $result;
+    }
+
+    public function store()
+    {
+        $transaction = Request::validate(static::$validations);
+        $fromAccount = Account::find($transaction['from_account_id']);
+        $toAccount = Account::find($transaction['to_account_id']);
+
+        /* Create offset for number series */
+        $offset = date('Y', strtotime($transaction['date']));
+        if ($fromAccount->type == 'I' && $transaction['official_receipt'] != NULL) {
+            $offset .= 1;
+        } elseif ($toAccount->type == 'C') {
+            $offset .= 0;
+        } else {
+            $offset .= 9;
+        }
+        $id = DB::selectOne(
+            "SELECT MAX(id) AS id
+            FROM eden.transactions
+            WHERE id BETWEEN {$offset}00000 AND {$offset}99999"
+        )->id;
+        if (!isset($id)) {
+            $id = $offset . '00001';
+        } else {
+            $id++;
+        }
+        $transaction['id'] = $id;
+
+        static::$model::create($transaction);
+
+        /* Index row */
+        $query = static::$model::with(static::$with)
+            ->select(static::$indexColumns);
+        $this->filter($query, [$this->primaryKey => $id]);
+        return $query->first();
     }
 
 

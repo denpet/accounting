@@ -72,6 +72,7 @@
       field-name="image"
       capture="user"
       no-thumbnails
+      @uploaded="transactionStore.show(transactionStore.current.id ?? 0)"
     />
     <div>
       <q-btn label="Submit" type="submit" color="primary" />
