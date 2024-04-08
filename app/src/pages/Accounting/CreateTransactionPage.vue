@@ -1,9 +1,9 @@
 <template>
   <q-page>
-    <ErCreate />
+    <ErEdit />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import ErCreate from 'components/Accounting/Transaction/ErCreate.vue'
+import ErEdit from 'components/Accounting/Transaction/ErEdit.vue'
 </script>

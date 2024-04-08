@@ -6,6 +6,7 @@
     row-key="id"
     :rows-per-page-options="[0]"
     dense
+    @row-click="onShow"
   >
     <template #top-left>
       <div class="q-table__title">Transactions</div>
@@ -22,86 +23,21 @@
         class="q-ml-md"
       />
     </template>
-
-    <template #header="header">
-      <q-tr :props="header">
-        <q-th />
-        <q-th
-          v-for="col in header.cols"
-          :key="col.name"
-          :props="header"
-          :style="col.style"
-        >
-          {{ col.label }}
-        </q-th>
-        <q-th />
-      </q-tr>
-    </template>
-
-    <template #body="body">
-      <q-tr
-        :props="body"
-        :class="body.expand ? '' : 'cursor-pointer'"
-        @click="body.expand = true"
-      >
-        <q-td auto-width style="vertical-align: top">
-          <q-btn
-            color="accent"
-            size="sm"
-            round
-            dense
-            :icon="body.expand ? 'mdi-arrow-down' : 'mdi-arrow-right'"
-            @click.stop="body.expand = !body.expand"
-          />
-        </q-td>
-        <template v-if="!body.expand">
-          <q-td v-for="col in body.cols" :key="col.name">
-            {{ col.value }}
-          </q-td>
-          <q-td auto-width>
-            <q-btn
-              color="negative"
-              icon="mdi-delete"
-              size="sm"
-              round
-              flat
-              @click="onDestroy(body.key)"
-            />
-          </q-td>
-        </template>
-        <q-td v-else colspan="6" style="padding: 0px">
-          <ErEdit
-            :id="body.key"
-            @changed="body.expand = false"
-            class="q-mr-none"
-          />
-        </q-td>
-      </q-tr>
-    </template>
   </q-table>
 </template>
 
 <script setup lang="ts">
 import { useAccountingTransactionStore } from 'stores/accounting/transaction'
-import ErEdit from './ErEdit.vue'
-import { QTableColumn, useQuasar } from 'quasar'
-
-const $q = useQuasar()
+import { QTableColumn } from 'quasar'
 
 const transactionStore = useAccountingTransactionStore()
+transactionStore.filter.date = '2024%'
 transactionStore.fetchIndex()
 
 const onCreateTransaction = () => transactionStore.create()
 
-const onDestroy = (id: 0) => {
-  $q.dialog({
-    title: 'Confirm',
-    message: 'Are you sure you want to delete the row?',
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    transactionStore.destroy(id)
-  })
+const onShow = (event: Event, row: { id: number }) => {
+  transactionStore.show(row.id)
 }
 
 const columns: QTableColumn[] = [
@@ -114,17 +50,24 @@ const columns: QTableColumn[] = [
     sortable: true,
   },
   {
-    name: 'name',
-    label: 'Name',
-    field: 'name',
+    name: 'date',
+    label: 'Date',
+    field: 'date',
     align: 'left',
     sortable: true,
   },
   {
-    name: 'type',
-    label: 'Type',
-    field: 'type',
+    name: 'note',
+    label: 'Note',
+    field: 'note',
     align: 'left',
+    sortable: true,
+  },
+  {
+    name: 'amount',
+    label: 'Amount',
+    field: 'amount',
+    align: 'right',
     sortable: true,
   },
 ]

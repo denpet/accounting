@@ -1,92 +1,154 @@
 <template>
-  <q-form v-if="transaction !== undefined" @submit.prevent="onSubmit">
-    <q-card class="row">
-      <q-card-section class="col-12">
-        <q-chip :label="id" icon="mdi-identifier" color="orange-6" />
-      </q-card-section>
-      <q-card-section class="col-12">
-        <q-date
-          v-model="transaction.date"
-          label="Date"
-          :error="errors?.date !== undefined"
-          :error-message="errors?.date?.toString()"
-        />
-      </q-card-section>
-      <q-card-section class="col-12">
-        <q-select
-          v-model="transaction.from_account_id"
-          label="Parent"
-          style="width: 100%; max-width: 40vh"
-          clearable
-          :options="accountStore.options ?? []"
-          map-options
-          emit-value
-          :error="errors?.from_account_id !== undefined"
-          :error-message="errors?.from_account_id?.toString()"
-        />
-      </q-card-section>
-      <q-card-actions class="col-12">
-        <q-btn
-          label="Save"
-          type="submit"
-          color="positive"
-          icon="mdi-content-save"
-        />
-        <q-space />
-        <q-btn
-          label="Delete"
-          color="negative"
-          icon="mdi-delete"
-          @click="onDestroy"
-        />
-      </q-card-actions>
-    </q-card>
+  <q-form
+    v-if="transactionStore.current"
+    @submit="onSubmit"
+    @reset="onReset"
+    class="q-gutter-md"
+  >
+    <div v-if="transactionStore.current.id">
+      Transaction Id <b>{{ transactionStore.current.id }}</b>
+    </div>
+    <q-input filled v-model="transactionStore.current.date" mask="####-##-##">
+      <template v-slot:append>
+        <q-icon name="event" class="cursor-pointer">
+          <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+            <q-date
+              v-close-popup
+              v-model="transactionStore.current.date"
+              mask="YYYY-MM-DD"
+            >
+              <div class="row items-center justify-end">
+                <q-btn v-close-popup label="Close" color="primary" flat />
+              </div>
+            </q-date>
+          </q-popup-proxy>
+        </q-icon>
+      </template>
+    </q-input>
+    <div class="row">
+      <q-select
+        class="col-6 q-pr-xs"
+        label="From"
+        v-model="transactionStore.current.from_account_id"
+        :options="fromAccountOptions"
+        map-options
+      />
+      <q-select
+        label="To"
+        class="col-6"
+        v-model="transactionStore.current.to_account_id"
+        :options="toAccountOptions"
+        map-options
+      />
+    </div>
+    <q-input label="Description" v-model="transactionStore.current.note" />
+    <div class="row">
+      <q-input
+        class="col-6 q-pr-xs"
+        label="Amount"
+        v-model="transactionStore.current.amount"
+      />
+      <q-input
+        label="VAT"
+        v-model="transactionStore.current.vat"
+        class="col-6"
+      />
+    </div>
+    <q-input label="TIN" v-model="transactionStore.current.tin" />
+    <q-input label="o.r." v-model="transactionStore.current.official_receipt" />
+    <q-img
+      v-for="(image, index) in transactionStore.current.images"
+      :key="index"
+      :src="image"
+      spinner-color="white"
+      style="height: 140px; max-width: 150px"
+    />
+    <q-uploader
+      v-if="transactionStore.current.id"
+      :url="`${uploadApi}/upload/${transactionStore.current.id}`"
+      label="Upload receipts"
+      auto-upload
+      hide-upload-btn
+      field-name="image"
+      capture="user"
+      no-thumbnails
+    />
+    <div>
+      <q-btn label="Submit" type="submit" color="primary" />
+      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+    </div>
   </q-form>
 </template>
 
 <script setup lang="ts">
-import { useAccountingTransactionStore } from 'stores/accounting/transaction'
+import {
+  useAccountingTransactionStore,
+  TransactionObject,
+} from 'stores/accounting/transaction'
 import { useAccountingAccountStore } from 'stores/accounting/account'
-import { useQuasar } from 'quasar'
-import { computed, onMounted, onUnmounted } from 'vue'
-
-const $q = useQuasar()
-
-const emit = defineEmits(['changed'])
+import { computed, onMounted } from 'vue'
 
 const props = defineProps({
   id: { type: Number, default: null },
 })
 
+const uploadApi = process.env.API + '/api/accounting/transactions'
+
 const transactionStore = useAccountingTransactionStore()
-const accountStore = useAccountingAccountStore()
-accountStore.fetchOptions()
-
-onMounted(() => transactionStore.show(props.id))
-
-onUnmounted(() => {
-  transactionStore.current.delete(props.id)
-  transactionStore.currentErrors.delete(props.id)
-})
-
-const transaction = computed(() => transactionStore.current.get(props.id))
-
-const errors = computed(() => transactionStore.currentErrors.get(props.id))
-
-const onSubmit = () => {
-  transactionStore.update(props.id).then(() => emit('changed'))
+if (props.id) {
+  transactionStore.show(props.id)
+} else {
+  transactionStore.create(<TransactionObject>{
+    id: null,
+    date: new Date().toLocaleDateString('sv'),
+    from_account_id: 1,
+    to_account_id: 12,
+    note: '',
+    amount: null,
+    vat: null,
+    tin: null,
+    official_receipt: null,
+  })
 }
 
-const onDestroy = () => {
-  $q.dialog({
-    title: 'Confirm',
-    message: 'Are you sure you want to delete the row?',
-    cancel: true,
-    persistent: true,
-  }).onOk(() => {
-    transactionStore.destroy(props.id).then(() => {
-      emit('changed', null)
-    })
+const accountStore = useAccountingAccountStore()
+onMounted(() => {
+  accountStore.fetchOptions()
+})
+
+const fromAccountOptions = computed(() => {
+  return accountStore.options.filter((value: { value: number }) => {
+    return [1, 3].includes(value.value)
+  })
+})
+
+const toAccountOptions = computed(() => {
+  return accountStore.options.filter((value: { value: number }) => {
+    return [
+      9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 44, 48, 49, 51, 53, 54,
+    ].includes(value.value)
+  })
+})
+
+const onSubmit = () => {
+  if (transactionStore.current.id) {
+    transactionStore.update(transactionStore.current.id)
+  } else {
+    transactionStore.store()
+  }
+}
+
+const onReset = () => {
+  transactionStore.create(<TransactionObject>{
+    id: null,
+    date: new Date().toLocaleDateString('sv'),
+    from_account_id: 1,
+    to_account_id: 12,
+    note: '',
+    amount: null,
+    vat: null,
+    tin: null,
+    official_receipt: null,
   })
 }
 </script>

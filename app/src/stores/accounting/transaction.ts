@@ -13,6 +13,7 @@ export type TransactionObject = {
   vat: number | null
   tin: string | null
   official_receipt: string | null
+  images: Array<string> | null
 }
 
 export type TransactionErrors = {
@@ -43,25 +44,23 @@ export const useAccountingTransactionStore = defineStore(
     const errors: Ref<TransactionErrors | undefined> = ref()
     const filter: Ref<TransactionFilter> = ref({})
 
-    const fetchIndex = async (force = false) => {
-      if (force || index.value === null) {
-        const urlParams = new URLSearchParams(
-          Object.entries(filter.value).filter((el) => el[1] !== undefined),
-        )
-        return api
-          .get(`accounting/transactions?${urlParams}`)
-          .then((response) => {
-            index.value = response.data.data
+    const fetchIndex = async () => {
+      const urlParams = new URLSearchParams(
+        Object.entries(filter.value).filter((el) => el[1] !== undefined),
+      )
+      return api
+        .get(`accounting/transactions?${urlParams}`)
+        .then((response) => {
+          index.value = response.data.data
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `Error reading. ${error.response?.data}`,
+            type: 'negative',
+            position: 'top-right',
+            progress: true,
           })
-          .catch((error) => {
-            Notify.create({
-              message: `Error reading. ${error.response?.data}`,
-              type: 'negative',
-              position: 'top-right',
-              progress: true,
-            })
-          })
-      }
+        })
     }
 
     const show = async (id: number) => {
