@@ -89,11 +89,12 @@ export const useAccountingTransactionStore = defineStore(
     const store = async () => {
       const transaction = current.value
       if (!transaction) throw new Error('No transaction')
+      errors.value = undefined
       return api
         .post('accounting/transactions', transaction)
         .then((response) => {
           transaction.id = response.data.id
-          if (index.value !== null) fetchIndex()
+          fetchIndex()
           Notify.create({
             message: 'Stored',
             type: 'positive',
@@ -108,10 +109,11 @@ export const useAccountingTransactionStore = defineStore(
     }
 
     const update = async (id: number) => {
+      errors.value = undefined
       return api
         .put(`accounting/transactions/${id}`, current.value)
         .then(() => {
-          if (index.value !== null) fetchIndex()
+          fetchIndex()
           Notify.create({
             message: 'Updated',
             type: 'positive',

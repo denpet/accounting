@@ -8,7 +8,13 @@
     <div v-if="transactionStore.current.id">
       Transaction Id <b>{{ transactionStore.current.id }}</b>
     </div>
-    <q-input filled v-model="transactionStore.current.date" mask="####-##-##">
+    <q-input
+      filled
+      v-model="transactionStore.current.date"
+      mask="####-##-##"
+      :error="transactionStore.errors?.date !== undefined"
+      :error-message="transactionStore.errors?.date?.toString()"
+    >
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
@@ -32,6 +38,9 @@
         v-model="transactionStore.current.from_account_id"
         :options="fromAccountOptions"
         map-options
+        emit-value
+        :error="transactionStore.errors?.from_account_id !== undefined"
+        :error-message="transactionStore.errors?.from_account_id?.toString()"
       />
       <q-select
         label="To"
@@ -39,23 +48,45 @@
         v-model="transactionStore.current.to_account_id"
         :options="toAccountOptions"
         map-options
+        emit-value
+        :error="transactionStore.errors?.to_account_id !== undefined"
+        :error-message="transactionStore.errors?.to_account_id?.toString()"
       />
     </div>
-    <q-input label="Description" v-model="transactionStore.current.note" />
+    <q-input
+      label="Description"
+      v-model="transactionStore.current.note"
+      :error="transactionStore.errors?.note !== undefined"
+      :error-message="transactionStore.errors?.note?.toString()"
+    />
     <div class="row">
       <q-input
         class="col-6 q-pr-xs"
         label="Amount"
         v-model="transactionStore.current.amount"
+        :error="transactionStore.errors?.amount !== undefined"
+        :error-message="transactionStore.errors?.amount?.toString()"
       />
       <q-input
         label="VAT"
         v-model="transactionStore.current.vat"
         class="col-6"
+        :error="transactionStore.errors?.vat !== undefined"
+        :error-message="transactionStore.errors?.vat?.toString()"
       />
     </div>
-    <q-input label="TIN" v-model="transactionStore.current.tin" />
-    <q-input label="o.r." v-model="transactionStore.current.official_receipt" />
+    <q-input
+      label="TIN"
+      v-model="transactionStore.current.tin"
+      :error="transactionStore.errors?.tin !== undefined"
+      :error-message="transactionStore.errors?.tin?.toString()"
+    />
+    <q-input
+      label="o.r."
+      v-model="transactionStore.current.official_receipt"
+      :error="transactionStore.errors?.official_receipt !== undefined"
+      :error-message="transactionStore.errors?.official_receipt?.toString()"
+    />
     <q-img
       v-for="(image, index) in transactionStore.current.images"
       :key="index"
