@@ -23,4 +23,4 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 });
 
-//Route::view('{any}', 'app')->where('any', '.*');
+Route::view('{any}', 'app')->where('any', '.*');
