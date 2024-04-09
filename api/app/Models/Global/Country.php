@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Country extends Model
 {
-    protected $table = 'eden.countries';
+    protected $table = 'eden.country';
     protected $primaryKey = 'id';
     protected $fillable = ['code', 'name'];
     public $timestamps = false;

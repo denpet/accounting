@@ -11,7 +11,7 @@
     <template #top-left>
       <div class="q-table__title">Transactions</div>
       <q-btn
-        @click.stop="onCreateTransaction"
+        @click.stop="onCreate"
         icon="mdi-plus"
         label="Transaction"
         color="secondary"
@@ -27,14 +27,29 @@
 </template>
 
 <script setup lang="ts">
-import { useAccountingTransactionStore } from 'stores/accounting/transaction'
+import {
+  useAccountingTransactionStore,
+  TransactionObject,
+} from 'stores/accounting/transaction'
 import { QTableColumn } from 'quasar'
 
 const transactionStore = useAccountingTransactionStore()
 transactionStore.filter.date = '2024%'
 transactionStore.fetchIndex()
 
-const onCreateTransaction = () => transactionStore.create()
+const onCreate = () => {
+  transactionStore.create(<TransactionObject>{
+    id: null,
+    date: new Date().toLocaleDateString('sv'),
+    from_account_id: 1,
+    to_account_id: 12,
+    note: '',
+    amount: null,
+    vat: null,
+    tin: null,
+    official_receipt: null,
+  })
+}
 
 const onShow = (event: Event, row: { id: number }) => {
   transactionStore.show(row.id)

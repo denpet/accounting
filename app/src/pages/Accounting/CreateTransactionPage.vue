@@ -1,6 +1,6 @@
 <template>
   <q-page>
-    <ErEdit />
+    <ErEdit class="q-pa-md" />
   </q-page>
 </template>
 

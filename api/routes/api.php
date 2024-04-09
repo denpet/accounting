@@ -3,6 +3,7 @@
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -34,5 +35,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'global'], function () {
         Route::get('countries/options', [CountryController::class, 'options']);
         Route::apiResource('countries', CountryController::class);
+    });
+
+    Route::group(['prefix' => 'users'], function () {
+        Route::get('users/options', [UserController::class, 'options']);
+        Route::apiResource('users', UserController::class);
     });
 });

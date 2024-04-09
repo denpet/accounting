@@ -20,61 +20,56 @@ type CountryFilter = {
 }
 
 export const useGlobalCountryStore = defineStore('global/country', () => {
-  const index = ref(null)
-  const options = ref(null)
+  const index = ref()
+  const options = ref()
   const filter: Ref<CountryFilter> = ref({})
-  const current: Ref<Map<number, CountryObject>> = ref(new Map())
-  const currentErrors: Ref<Map<number, CountryErrors>> = ref(new Map())
-  const created: Ref<Map<string, CountryObject>> = ref(new Map())
-  const createdErrors: Ref<Map<string, CountryErrors>> = ref(new Map())
+  const current: Ref<CountryObject | undefined> = ref()
+  const errors: Ref<CountryErrors | undefined> = ref()
 
-  const fetchIndex = async (force = false) => {
-    if (force || index.value === null) {
-      const urlParams = new URLSearchParams(
-        Object.entries(filter.value).filter((el) => el[1] !== undefined),
-      )
-      return api
-        .get(`global/countries?${urlParams}`)
-        .then((response) => {
-          index.value = response.data.data
+  const fetchIndex = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(filter.value).filter((el) => el[1] !== undefined),
+    )
+    return api
+      .get(`global/countries?${urlParams}`)
+      .then((response) => {
+        index.value = response.data.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
         })
-        .catch((error) => {
-          Notify.create({
-            message: `Error reading. ${error.response?.data}`,
-            type: 'negative',
-            position: 'top-right',
-            progress: true,
-          })
-        })
-    }
+      })
   }
 
-  const fetchOptions = async (force = false) => {
-    if (force || options.value === null) {
-      const urlParams = new URLSearchParams(
-        Object.entries(filter.value).filter((el) => el[1] !== undefined),
-      )
-      return api
-        .get(`global/countries/options?${urlParams}`)
-        .then((response) => {
-          options.value = response.data
+  const fetchOptions = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(filter.value).filter((el) => el[1] !== undefined),
+    )
+    return api
+      .get(`global/countries/options?${urlParams}`)
+      .then((response) => {
+        options.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
         })
-        .catch((error) => {
-          Notify.create({
-            message: `Error reading. ${error.response?.data}`,
-            type: 'negative',
-            position: 'top-right',
-            progress: true,
-          })
-        })
-    }
+      })
   }
 
   const show = async (id: number) => {
     return api
       .get(`global/countries/${id}`)
       .then((response) => {
-        current.value.set(id, response.data)
+        current.value = response.data
+        errors.value = undefined
       })
       .catch((error) => {
         Notify.create({
@@ -88,24 +83,24 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
 
   const create = (prefill: CountryObject = <CountryObject>{}) => {
     const id = self.crypto.randomUUID()
-    created.value.set(id, {
+    current.value = {
       ...{
         country: '',
         name: '',
       },
       ...prefill,
-    })
+    }
     return id
   }
 
-  const store = async (id: string) => {
-    const country = created.value.get(id)
-    if (!country) throw new Error('No country')
+  const store = async () => {
+    if (!current.value) throw new Error('No country')
+    errors.value = undefined
     return api
-      .post('global/countries', country)
+      .post('global/countries', current.value)
       .then(() => {
-        if (index.value !== null) fetchIndex()
-        if (options.value !== null) fetchOptions()
+        fetchIndex()
+        fetchOptions()
         Notify.create({
           message: 'Stored',
           type: 'positive',
@@ -114,17 +109,18 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
         })
       })
       .catch((response) => {
-        createdErrors.value.set(id, response.response.data.errors)
+        errors.value = response.response.data.errors
         throw new Error(response.response.data.message)
       })
   }
 
   const update = async (id: number) => {
+    errors.value = undefined
     return api
-      .put(`global/countries/${id}`, current.value.get(id))
+      .put(`global/countries/${id}`, current.value)
       .then(() => {
-        if (index.value !== null) fetchIndex()
-        if (options.value !== null) fetchOptions()
+        fetchIndex()
+        fetchOptions()
         Notify.create({
           message: 'Updated',
           type: 'positive',
@@ -133,7 +129,7 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
         })
       })
       .catch((response) => {
-        currentErrors.value.set(id, response.response.data.errors)
+        errors.value = response.response.data.errors
         throw new Error(response.response.data.message)
       })
   }
@@ -142,9 +138,9 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
     return api
       .delete(`global/countries/${id}`)
       .then(() => {
-        if (index.value !== null) fetchIndex()
-        if (options.value !== null) fetchOptions()
-        current.value.delete(id)
+        fetchIndex()
+        fetchOptions()
+        current.value = undefined
         Notify.create({
           message: 'Deleted',
           type: 'positive',
@@ -175,8 +171,6 @@ export const useGlobalCountryStore = defineStore('global/country', () => {
     filter,
     options,
     current,
-    currentErrors,
-    created,
-    createdErrors,
+    errors,
   }
 })

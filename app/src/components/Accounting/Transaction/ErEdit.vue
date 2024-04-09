@@ -2,7 +2,7 @@
   <q-form
     v-if="transactionStore.current"
     @submit="onSubmit"
-    @reset="onReset"
+    @reset="transactionStore.current = undefined"
     class="q-gutter-md"
   >
     <div v-if="transactionStore.current.id">
@@ -103,12 +103,15 @@
       field-name="image"
       capture="user"
       no-thumbnails
-      @uploaded="transactionStore.show(transactionStore.current.id ?? 0)"
+      @uploaded="transactionStore.show(transactionStore.current?.id ?? 0)"
     />
-    <div>
-      <q-btn label="Submit" type="submit" color="primary" />
-      <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
-    </div>
+    <q-toolbar>
+      <q-btn label="Submit" type="submit" color="positive" />
+      <q-space />
+      <q-btn label="Cancel" type="reset" color="warning" />
+      <q-space />
+      <q-btn label="New" @click="onCreate" color="warning" />
+    </q-toolbar>
   </q-form>
 </template>
 
@@ -121,16 +124,11 @@ import { useAccountingAccountStore } from 'stores/accounting/account'
 import { computed, onMounted } from 'vue'
 import { Cookies } from 'quasar'
 
-const props = defineProps({
-  id: { type: Number, default: null },
-})
-
 const uploadApi = process.env.API + '/api/accounting/transactions'
 
 const transactionStore = useAccountingTransactionStore()
-if (props.id) {
-  transactionStore.show(props.id)
-} else {
+
+const onCreate = () => {
   transactionStore.create(<TransactionObject>{
     id: null,
     date: new Date().toLocaleDateString('sv'),
@@ -164,25 +162,11 @@ const toAccountOptions = computed(() => {
 })
 
 const onSubmit = () => {
-  if (transactionStore.current.id) {
+  if (transactionStore.current?.id) {
     transactionStore.update(transactionStore.current.id)
   } else {
     transactionStore.store()
   }
-}
-
-const onReset = () => {
-  transactionStore.create(<TransactionObject>{
-    id: null,
-    date: new Date().toLocaleDateString('sv'),
-    from_account_id: 1,
-    to_account_id: 12,
-    note: '',
-    amount: null,
-    vat: null,
-    tin: null,
-    official_receipt: null,
-  })
 }
 
 const uploadFile = () => {
@@ -204,7 +188,7 @@ const uploadFile = () => {
       formFields: [
         {
           name: 'id',
-          value: transactionStore.current.id,
+          value: transactionStore.current?.id,
         },
       ],
     })

@@ -23,12 +23,10 @@ type AccountFilter = {
 export const useAccountingAccountStore = defineStore(
   'accounting/account',
   () => {
-    const index = ref([])
-    const options = ref([])
-    const current: Ref<Map<number, AccountObject>> = ref(new Map())
-    const currentErrors: Ref<Map<number, AccountErrors>> = ref(new Map())
-    const created: Ref<Map<string, AccountObject>> = ref(new Map())
-    const createdErrors: Ref<Map<string, AccountErrors>> = ref(new Map())
+    const index = ref()
+    const options = ref()
+    const current: Ref<AccountObject | undefined> = ref()
+    const errors: Ref<AccountErrors | undefined> = ref()
     const filter: Ref<AccountFilter> = ref({})
 
     const fetchIndex = async () => {
@@ -73,7 +71,8 @@ export const useAccountingAccountStore = defineStore(
       return api
         .get(`accounting/accounts/${id}`)
         .then((response) => {
-          current.value.set(id, response.data)
+          current.value = response.data
+          errors.value = undefined
         })
         .catch((error) => {
           Notify.create({
@@ -87,25 +86,25 @@ export const useAccountingAccountStore = defineStore(
 
     const create = (prefill: AccountObject = <AccountObject>{}) => {
       const id = self.crypto.randomUUID()
-      created.value.set(id, {
+      current.value = {
         ...{
           name: '',
           type: '',
         },
         ...prefill,
-      })
+      }
       return id
     }
 
-    const store = async (id: string) => {
-      const account = created.value.get(id)
-      if (!account) throw new Error('No account')
+    const store = async () => {
+      if (!current.value) throw new Error('No account')
+      errors.value = undefined
       return api
-        .post('accounting/accounts', account)
+        .post('accounting/accounts', current.value)
         .then((response) => {
-          account.id = response.data.id
-          if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
+          if (current.value) current.value.id = response.data.id
+          fetchIndex()
+          fetchOptions()
           Notify.create({
             message: 'Stored',
             type: 'positive',
@@ -114,17 +113,18 @@ export const useAccountingAccountStore = defineStore(
           })
         })
         .catch((response) => {
-          createdErrors.value.set(id, response.response.data.errors)
+          errors.value = response.response.data.errors
           throw new Error(response.response.data.message)
         })
     }
 
     const update = async (id: number) => {
+      errors.value = undefined
       return api
-        .put(`accounting/accounts/${id}`, current.value.get(id))
+        .put(`accounting/accounts/${id}`, current.value)
         .then(() => {
-          if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
+          fetchIndex()
+          fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -133,7 +133,7 @@ export const useAccountingAccountStore = defineStore(
           })
         })
         .catch((response) => {
-          currentErrors.value.set(id, response.response.data.errors)
+          errors.value = response.response.data.errors
           throw new Error(response.response.data.message)
         })
     }
@@ -142,8 +142,8 @@ export const useAccountingAccountStore = defineStore(
       return api
         .delete(`accounting/accounts/${id}`)
         .then(() => {
-          if (index.value !== null) fetchIndex()
-          if (options.value !== null) fetchOptions()
+          fetchIndex()
+          fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -174,9 +174,7 @@ export const useAccountingAccountStore = defineStore(
       filter,
       options,
       current,
-      currentErrors,
-      created,
-      createdErrors,
+      errors,
     }
   },
 )

@@ -40,7 +40,7 @@ export const useAccountingTransactionStore = defineStore(
   'accounting/transaction',
   () => {
     const index = ref()
-    const current: Ref<TransactionObject> = ref(<TransactionObject>{})
+    const current: Ref<TransactionObject | undefined> = ref()
     const errors: Ref<TransactionErrors | undefined> = ref()
     const filter: Ref<TransactionFilter> = ref({})
 

@@ -1,58 +1,58 @@
 <template>
-  <template v-if="country !== undefined">
-    <q-td>
-      {{ country.code }}
-      <q-chip :label="id" icon="mdi-identifier" />
-    </q-td>
-    <q-td>
-      <q-input
-        v-model="country.name"
-        label="Name"
-        :error="errors?.name !== undefined"
-        :error-message="errors?.name?.toString()"
-      />
-    </q-td>
-    <q-td class="q-mt-md">
-      <q-btn color="negative" icon="mdi-delete" @click="onDestroy" round flat />
+  <q-form
+    v-if="countryStore.current"
+    @submit="onSubmit"
+    @reset="countryStore.current = undefined"
+    class="q-gutter-md"
+  >
+    <div v-if="countryStore.current.id">
+      Id <b>{{ countryStore.current.id }}</b>
+    </div>
+    <q-input
+      label="Code"
+      v-model="countryStore.current.code"
+      :error="countryStore.errors?.code !== undefined"
+      :error-message="countryStore.errors?.code?.toString()"
+    />
+    <q-input
+      label="Name"
+      v-model="countryStore.current.name"
+      :error="countryStore.errors?.name !== undefined"
+      :error-message="countryStore.errors?.name?.toString()"
+    />
+    <q-toolbar>
+      <q-btn label="Submit" type="submit" color="positive" />
+      <q-space />
+      <q-btn label="Cancel" type="reset" color="warning" />
+      <q-space />
       <q-btn
-        color="positive"
-        icon="mdi-content-save"
-        @click="onSubmit"
-        round
-        flat
+        v-if="countryStore.current?.id"
+        label="Delete"
+        @click="onDestroy"
+        color="negative"
       />
-    </q-td>
-  </template>
+    </q-toolbar>
+  </q-form>
 </template>
 
 <script setup lang="ts">
-import { useGlobalCountryStore } from 'stores/global/country'
 import { useQuasar } from 'quasar'
-import { computed, onMounted, onUnmounted } from 'vue'
+import { useGlobalCountryStore } from 'stores/global/country'
 
 const $q = useQuasar()
 
-const emit = defineEmits(['changed'])
-
-const props = defineProps({
-  id: { type: Number, default: null },
-})
-
 const countryStore = useGlobalCountryStore()
 
-onMounted(() => countryStore.show(props.id))
-
-onUnmounted(() => {
-  countryStore.current.delete(props.id)
-  countryStore.currentErrors.delete(props.id)
-})
-
-const country = computed(() => countryStore.current.get(props.id))
-
-const errors = computed(() => countryStore.currentErrors.get(props.id))
-
 const onSubmit = () => {
-  countryStore.update(props.id).then(() => emit('changed'))
+  if (countryStore.current?.id) {
+    countryStore.update(countryStore.current.id).then(() => {
+      countryStore.current = undefined
+    })
+  } else {
+    countryStore.store().then(() => {
+      countryStore.current = undefined
+    })
+  }
 }
 
 const onDestroy = () => {
@@ -62,8 +62,8 @@ const onDestroy = () => {
     cancel: true,
     persistent: true,
   }).onOk(() => {
-    countryStore.destroy(props.id).then(() => {
-      emit('changed', null)
+    countryStore.destroy(countryStore.current?.id ?? 0).then(() => {
+      countryStore.current = undefined
     })
   })
 }
