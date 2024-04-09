@@ -24,7 +24,7 @@ export const useAccountingAccountStore = defineStore(
   'accounting/account',
   () => {
     const index = ref()
-    const options = ref()
+    const options = ref([])
     const current: Ref<AccountObject | undefined> = ref()
     const errors: Ref<AccountErrors | undefined> = ref()
     const filter: Ref<AccountFilter> = ref({})
