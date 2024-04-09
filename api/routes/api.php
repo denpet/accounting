@@ -3,6 +3,8 @@
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
+use App\Http\Controllers\Unicenta\CustomerController;
+use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -40,5 +42,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'users'], function () {
         Route::get('users/options', [UserController::class, 'options']);
         Route::apiResource('users', UserController::class);
+    });
+
+
+    Route::group(['prefix' => 'unicenta'], function () {
+        Route::apiResource('customers', CustomerController::class);
+        Route::group(['prefix' => 'reports'], function () {
+            Route::get('statement-of-account', [StatementOfAccountController::class, 'index']);
+            Route::get('statement-of-account/{id}', [StatementOfAccountController::class, 'show']);
+        });
     });
 });

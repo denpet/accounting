@@ -53,6 +53,21 @@ const routes: RouteRecordRaw[] = [
           },
         ],
       },
+      {
+        path: 'unicenta',
+        children: [
+          {
+            path: 'reports',
+            children: [
+              {
+                path: 'statement-of-account',
+                component: () =>
+                  import('pages/Unicenta/Report/StatementOfAccountPage.vue'),
+              },
+            ],
+          },
+        ],
+      },
     ],
   },
 

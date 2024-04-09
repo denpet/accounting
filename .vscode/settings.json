@@ -20,5 +20,6 @@
   },
   "[sql]": {
     "editor.defaultFormatter": "mtxr.sqltools"
-  }
+  },
+  "bladeFormatter.format.indentInnerHtml": true
 }

@@ -96,6 +96,21 @@
             </q-item>
           </q-list>
         </q-expansion-item>
+        <q-expansion-item icon="mdi-web" label="Unicenta">
+          <q-list class="q-pl-lg">
+            <q-item
+              to="/unicenta/reports/statement-of-account"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-flag" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Stament-of-account</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
         <q-expansion-item icon="mdi-account" label="User">
           <q-list class="q-pl-lg">
             <q-item to="/user/user" active-class="q-item-no-link-highlighting">
