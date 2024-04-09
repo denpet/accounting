@@ -5,9 +5,13 @@
     @reset="transactionStore.current = undefined"
     class="q-gutter-md"
   >
-    <div v-if="transactionStore.current.id">
-      Transaction Id <b>{{ transactionStore.current.id }}</b>
-    </div>
+    <q-chip
+      v-if="transactionStore.current.id"
+      :label="transactionStore.current.id"
+      icon="mdi-identifier"
+      color="orange-6"
+    />
+    <q-chip v-else label="New " icon="mdi-identifier" color="orange-6" />
     <q-input
       filled
       v-model="transactionStore.current.date"

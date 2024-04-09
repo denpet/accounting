@@ -5,9 +5,13 @@
     @reset="userStore.current = undefined"
     class="q-gutter-md"
   >
-    <div v-if="userStore.current.id">
-      User Id <b>{{ userStore.current.id }}</b>
-    </div>
+    <q-chip
+      v-if="userStore.current.id"
+      :label="userStore.current.id"
+      icon="mdi-identifier"
+      color="orange-6"
+    />
+    <q-chip v-else label="New " icon="mdi-identifier" color="orange-6" />
     <q-input
       label="Name"
       v-model="userStore.current.name"

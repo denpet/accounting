@@ -10,7 +10,7 @@ export type CountryObject = {
 }
 
 export type CountryErrors = {
-  country?: string
+  code?: string
   name?: string
 }
 

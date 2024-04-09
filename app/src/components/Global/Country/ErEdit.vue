@@ -5,9 +5,13 @@
     @reset="countryStore.current = undefined"
     class="q-gutter-md"
   >
-    <div v-if="countryStore.current.id">
-      Id <b>{{ countryStore.current.id }}</b>
-    </div>
+    <q-chip
+      v-if="countryStore.current.id"
+      :label="countryStore.current.id"
+      icon="mdi-identifier"
+      color="orange-6"
+    />
+    <q-chip v-else label="New " icon="mdi-identifier" color="orange-6" />
     <q-input
       label="Code"
       v-model="countryStore.current.code"

@@ -5,6 +5,14 @@
     @reset="accountStore.current = undefined"
     class="q-gutter-md"
   >
+    <q-chip
+      v-if="accountStore.current.id"
+      :label="accountStore.current.id"
+      icon="mdi-identifier"
+      color="orange-6"
+    />
+    <q-chip v-else label="New " icon="mdi-identifier" color="orange-6" />
+
     <div v-if="accountStore.current.id">
       User Id <b>{{ accountStore.current.id }}</b>
     </div>
