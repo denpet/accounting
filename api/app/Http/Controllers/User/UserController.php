@@ -11,7 +11,8 @@ class UserController extends RestController
     protected static $validations = [
         'name' => 'required|string',
         'email' => 'required|email',
-        'password' => 'nullable|string'
+        'password' => 'nullable|string',
+        'role_id' => 'required|exists:.eden.roles,id',
     ];
     protected static $indexColumns = ['id', 'name', 'email'];
     protected static $orderBy = ['name', 'email'];

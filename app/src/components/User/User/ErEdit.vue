@@ -24,6 +24,17 @@
       :error="userStore.errors?.email !== undefined"
       :error-message="userStore.errors?.email?.toString()"
     />
+    <q-select
+      v-model="userStore.current.role_id"
+      label="Role"
+      :options="roleStore.options"
+      map-options
+      emit-value
+      style="width: 100%; max-width: 40vh"
+      clearable
+      :error="userStore.errors?.role_id !== undefined"
+      :error-message="userStore.errors?.role_id?.toString()"
+    />
     <q-input
       label="Password"
       v-model="userStore.current.password"
@@ -49,10 +60,13 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { useUserUserStore } from 'stores/user/user'
+import { useUserRoleStore } from 'stores/user/role'
 
 const $q = useQuasar()
 
 const userStore = useUserUserStore()
+const roleStore = useUserRoleStore()
+roleStore.fetchOptions()
 
 const onSubmit = () => {
   if (userStore.current?.id) {

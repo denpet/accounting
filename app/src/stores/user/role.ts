@@ -3,38 +3,33 @@ import { Ref, ref } from 'vue'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
-export type UserObject = {
+export type RoleObject = {
   id: number | null
   name: string
-  email: string
-  role_id: number
-  password: string
 }
 
-export type UserErrors = {
+export type RoleErrors = {
   id?: string
   name?: string
-  email?: string
-  role_id?: string
-  password?: string
 }
 
-type UserFilter = {
+type RoleFilter = {
   name?: string
 }
 
-export const useUserUserStore = defineStore('user/user', () => {
+export const useUserRoleStore = defineStore('user/role', () => {
   const index = ref([])
-  const current: Ref<UserObject | undefined> = ref()
-  const errors: Ref<UserErrors | undefined> = ref()
-  const filter: Ref<UserFilter> = ref({})
+  const options = ref([])
+  const current: Ref<RoleObject | undefined> = ref()
+  const errors: Ref<RoleErrors | undefined> = ref()
+  const filter: Ref<RoleFilter> = ref({})
 
   const fetchIndex = async () => {
     const urlParams = new URLSearchParams(
       Object.entries(filter.value).filter((el) => el[1] !== undefined),
     )
     return api
-      .get(`users/users?${urlParams}`)
+      .get(`users/roles?${urlParams}`)
       .then((response) => {
         index.value = response.data.data
       })
@@ -48,9 +43,28 @@ export const useUserUserStore = defineStore('user/user', () => {
       })
   }
 
+  const fetchOptions = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(filter.value).filter((el) => el[1] !== undefined),
+    )
+    return api
+      .get(`users/roles/options?${urlParams}`)
+      .then((response) => {
+        options.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
+        })
+      })
+  }
+
   const show = async (id: number) => {
     return api
-      .get(`users/users/${id}`)
+      .get(`users/roles/${id}`)
       .then((response) => {
         current.value = response.data
         errors.value = undefined
@@ -65,7 +79,7 @@ export const useUserUserStore = defineStore('user/user', () => {
       })
   }
 
-  const create = (prefill: UserObject = <UserObject>{}) => {
+  const create = (prefill: RoleObject = <RoleObject>{}) => {
     current.value = {
       ...{ name: '', email: '' },
       ...prefill,
@@ -74,10 +88,10 @@ export const useUserUserStore = defineStore('user/user', () => {
 
   const store = async () => {
     const user = current.value
-    if (!user) throw new Error('No user')
+    if (!user) throw new Error('No role')
     errors.value = undefined
     return api
-      .post('users/users', user)
+      .post('users/roles', user)
       .then((response) => {
         user.id = response.data.id
         fetchIndex()
@@ -97,7 +111,7 @@ export const useUserUserStore = defineStore('user/user', () => {
   const update = async (id: number) => {
     errors.value = undefined
     return api
-      .put(`users/users/${id}`, current.value)
+      .put(`users/roles/${id}`, current.value)
       .then(() => {
         fetchIndex()
         Notify.create({
@@ -115,7 +129,7 @@ export const useUserUserStore = defineStore('user/user', () => {
 
   const destroy = async (id: number) => {
     return api
-      .delete(`users/users/${id}`)
+      .delete(`users/roles/${id}`)
       .then(() => {
         fetchIndex()
         Notify.create({
@@ -138,12 +152,14 @@ export const useUserUserStore = defineStore('user/user', () => {
 
   return {
     fetchIndex,
+    fetchOptions,
     show,
     create,
     store,
     update,
     destroy,
     index,
+    options,
     filter,
     current,
     errors,
