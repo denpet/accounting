@@ -6,6 +6,7 @@ type Auth = {
   email: string
   password: string
   user_name: string
+  role_id: number
 }
 
 type AuthError = {
@@ -19,6 +20,7 @@ export const useAuthStore = defineStore('auth', () => {
     email: '',
     password: '',
     user_name: '',
+    role_id: 0,
   })
 
   const errors: Ref<AuthError> = ref({})
@@ -58,6 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
         email: '',
         password: '',
         user_name: '',
+        role_id: 0,
       }
     })
   }

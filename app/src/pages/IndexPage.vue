@@ -1,6 +1,7 @@
 <template>
   <q-page>
     <q-btn
+      v-if="auth.current.role_id === 1"
       label="Accounting"
       @click="onCreateTransaction"
       icon="mdi-cash-register"
@@ -16,6 +17,9 @@ import {
   TransactionObject,
 } from 'stores/accounting/transaction'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from 'stores/auth'
+
+const auth = useAuthStore()
 
 const router = useRouter()
 

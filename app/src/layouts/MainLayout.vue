@@ -55,7 +55,11 @@
             <q-item-label>Home</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item icon="mdi-file-cabinet" label="Accounting">
+        <q-expansion-item
+          v-if="auth.current.role_id === 1"
+          icon="mdi-file-cabinet"
+          label="Accounting"
+        >
           <q-list class="q-pl-lg">
             <q-item
               to="/accounting/account"
@@ -81,7 +85,11 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-expansion-item icon="mdi-web" label="Global">
+        <q-expansion-item
+          v-if="auth.current.role_id === 1"
+          icon="mdi-web"
+          label="Global"
+        >
           <q-list class="q-pl-lg">
             <q-item
               to="/global/country"
@@ -111,7 +119,11 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-expansion-item icon="mdi-web" label="Payroll">
+        <q-expansion-item
+          v-if="auth.current.role_id === 1"
+          icon="mdi-web"
+          label="Payroll"
+        >
           <q-list class="q-pl-lg">
             <q-item
               to="/payroll/employee"
@@ -126,7 +138,11 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-expansion-item icon="mdi-account" label="User">
+        <q-expansion-item
+          v-if="auth.current.role_id === 1"
+          icon="mdi-account"
+          label="User"
+        >
           <q-list class="q-pl-lg">
             <q-item to="/user/user" active-class="q-item-no-link-highlighting">
               <q-item-section avatar>
