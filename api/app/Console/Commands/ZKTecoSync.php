@@ -2,8 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Models\TimeAttendance\Employee;
-use App\Models\TimeAttendance\TimeRecord;
+use App\Models\Payroll\Employee;
+use App\Models\Payroll\TimeRecord;
 use App\Services\ZKTecoService;
 use App\ZKLibrary\ZKLib;
 use Illuminate\Console\Command;

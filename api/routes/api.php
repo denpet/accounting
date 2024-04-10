@@ -3,6 +3,7 @@
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
+use App\Http\Controllers\Payroll\EmployeeController;
 use App\Http\Controllers\Unicenta\CustomerController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
 use App\Http\Controllers\User\UserController;
@@ -44,6 +45,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::apiResource('users', UserController::class);
     });
 
+    Route::group(['prefix' => 'payroll'], function () {
+        Route::get('employees/options', [EmployeeController::class, 'options']);
+        Route::apiResource('employees', EmployeeController::class);
+    });
 
     Route::group(['prefix' => 'unicenta'], function () {
         Route::apiResource('customers', CustomerController::class);

@@ -54,6 +54,15 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: 'payroll',
+        children: [
+          {
+            path: 'employee',
+            component: () => import('pages/Payroll/EmployeePage.vue'),
+          },
+        ],
+      },
+      {
         path: 'unicenta',
         children: [
           {

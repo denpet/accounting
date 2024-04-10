@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\TimeAttendance;
+namespace App\Models\Payroll;
 
 use Illuminate\Database\Eloquent\Model;
 
