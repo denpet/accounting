@@ -102,6 +102,7 @@ module.exports = configure(function (ctx) {
         '/login': 'http://localhost:8000',
         '/logout': 'http://localhost:8000',
         '/sanctum': 'http://localhost:8000',
+        '/images': 'http://localhost:8000',
       },
     },
 

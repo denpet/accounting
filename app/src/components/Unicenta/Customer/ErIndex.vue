@@ -24,14 +24,6 @@ const onShow = (event: Event, row: { id: number }) => {
 
 const columns: QTableColumn[] = [
   {
-    name: 'id',
-    label: 'Id#',
-    field: 'id',
-    align: 'left',
-    style: 'width: 5rem',
-    sortable: true,
-  },
-  {
     name: 'name',
     label: 'Name',
     field: 'name',

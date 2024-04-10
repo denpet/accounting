@@ -21,7 +21,7 @@ class StatementOfAccountController extends Controller
                 city,
                 region,
                 country
-            FROM unicentaopos.customers
+            FROM customers
             WHERE id=:id",
             ['id' => $id]
         );
@@ -33,13 +33,13 @@ class StatementOfAccountController extends Controller
                 tl.units, 
                 tl.price * (1+ta.rate) as price,
                 r.datenew
-            FROM unicentaopos.tickets t 
-            JOIN unicentaopos.ticketlines tl on t.id=tl.ticket
-            JOIN unicentaopos.products p on tl.product=p.id
-            JOIN unicentaopos.taxes ta on tl.taxid=ta.id
-            JOIN unicentaopos.receipts r on t.id=r.id
+            FROM tickets t 
+            JOIN ticketlines tl on t.id=tl.ticket
+            JOIN products p on tl.product=p.id
+            JOIN taxes ta on tl.taxid=ta.id
+            JOIN receipts r on t.id=r.id
             WHERE t.customer=:id
-            ORDER BY t.ticketid",
+            ORDER BY t.ticketid, tl.line",
             ['id' => $id]
         );
         $ticket = null;
@@ -64,9 +64,9 @@ class StatementOfAccountController extends Controller
             "SELECT p.payment, 
                 p.total, 
                 r.datenew AS date
-            FROM unicentaopos.payments p
-            JOIN unicentaopos.receipts r on p.receipt = r.id
-            JOIN unicentaopos.tickets t on p.receipt = t.id
+            FROM payments p
+            JOIN receipts r on p.receipt = r.id
+            JOIN tickets t on p.receipt = t.id
             WHERE t.customer = :id 	
                 AND p.payment not in ('debt','debtpaid')
                 AND p.total>0.01

@@ -6,7 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    protected $table = 'unicentaopos.customers';
+    protected $connection = 'unicenta';
+    protected $table = 'customers';
     protected $primaryKey = 'id';
     protected $keyType = 'string';
     protected $fillable = ['name', 'type'];
