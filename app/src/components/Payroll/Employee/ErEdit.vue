@@ -20,9 +20,10 @@
     />
     <q-input
       label="Rate"
-      v-model="employeeStore.current.rate"
+      v-model.number="employeeStore.current.rate"
       :error="employeeStore.errors?.rate !== undefined"
       :error-message="employeeStore.errors?.rate?.toString()"
+      style="width: 100%; max-width: 50vh"
     />
     <q-select
       v-model="employeeStore.current.active"
@@ -34,7 +35,7 @@
       ]"
       map-options
       emit-value
-      style="width: 100%; max-width: 40vh"
+      style="width: 100%; max-width: 50vh"
       clearable
       :error="employeeStore.errors?.active !== undefined"
       :error-message="employeeStore.errors?.active?.toString()"
