@@ -51,8 +51,8 @@ class ZKTecoSync extends Command
                         'employee_id' => $attendance[1],
                         'biometric_status' => $attendance[2],
                         'biometric_timestamp' => $attendance[3],
-                        'adjusted_status' => $attendance[2],
-                        'adjusted_timestamp' => $attendance[3]
+                        'status' => 0,
+                        'adjusted_timestamp' => null
                     ]
                 );
                 $timeRecord->employee_id = $attendance[1];
