@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -34,6 +35,9 @@ class RestController extends Controller
                 $query->whereNull($key);
             } elseif (substr($clause, 0, 3) === 'in(') {
                 $query->whereIn($key, explode(',', substr($clause, 3, -1)));
+            } elseif (substr($clause, 0, 8) === 'between(') {
+                $range = explode(' and ', substr($clause, 8, -1));
+                $query->whereBetween($key, $range);
             } elseif (substr($clause, 0, 2) === '!%') {
                 $query->where($key, 'not like', substr($clause, 1));
             } elseif (substr($clause, 0, 1) === '!' && is_numeric($clause)) {
