@@ -32,7 +32,12 @@ class TimeRecordController extends RestController
 
         /* Get first day of week for min and max */
         $firstWeek = strtotime(Date('Y-m-d', strtotime('Last Saturday', strtotime($range->first_date))));
-        $lastWeek = strtotime(Date('Y-m-d', strtotime('Last Saturday', strtotime($range->last_date))));
+        $today = Date('w', strtotime($range->last_date));
+        if ($today != 6) {
+            $lastWeek = strtotime(Date('Y-m-d', strtotime('Next Saturday', strtotime($range->last_date))));
+        } else {
+            $lastWeek = strtotime($range->last_date);
+        }
         $data = [];
         for ($date = $lastWeek; $date >= $firstWeek; $date -= 7 * 86400) {
             $data[] = [
