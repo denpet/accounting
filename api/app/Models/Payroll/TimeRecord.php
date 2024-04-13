@@ -10,7 +10,7 @@ class TimeRecord extends Model
 {
     protected $table = 'eden.time_records';
     protected $primaryKey = 'id';
-    protected $fillable = ['id', 'employee_id', 'biometric_timestamp', 'biometric_status', 'adjusted_timestamp', 'hide'];
+    protected $fillable = ['zk_id', 'employee_id', 'biometric_timestamp', 'biometric_status', 'adjusted_timestamp', 'hide'];
     public $timestamps = false;
 
     public function employee(): BelongsTo
