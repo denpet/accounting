@@ -40,7 +40,7 @@
       v-model="leftDrawerOpen"
       show-if-above
       bordered
-      :minia="miniState"
+      :mini="miniState"
       @mouseover="miniState = false"
       @mouseout="miniState = true"
       mini-to-overlaya
@@ -104,14 +104,14 @@
             </q-item>
           </q-list>
         </q-expansion-item>
-        <q-expansion-item icon="mdi-web" label="Unicenta">
+        <q-expansion-item icon="mdi-cash-register" label="Unicenta">
           <q-list class="q-pl-lg">
             <q-item
               to="/unicenta/reports/statement-of-account"
               active-class="q-item-no-link-highlighting"
             >
               <q-item-section avatar>
-                <q-icon name="mdi-flag" />
+                <q-icon name="mdi-receipt-text-outline" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>Stament-of-account</q-item-label>
@@ -121,7 +121,7 @@
         </q-expansion-item>
         <q-expansion-item
           v-if="auth.current.role_id === 1"
-          icon="mdi-web"
+          icon="mdi-account-clock"
           label="Payroll"
         >
           <q-list class="q-pl-lg">
@@ -130,10 +130,21 @@
               active-class="q-item-no-link-highlighting"
             >
               <q-item-section avatar>
-                <q-icon name="mdi-flag" />
+                <q-icon name="mdi-account" />
               </q-item-section>
               <q-item-section>
                 <q-item-label>Employee</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              to="/payroll/time-record"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-clipboard-text-clock-outline" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Time Record</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>

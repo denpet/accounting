@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

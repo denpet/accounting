@@ -60,6 +60,10 @@ const routes: RouteRecordRaw[] = [
             path: 'employee',
             component: () => import('pages/Payroll/EmployeePage.vue'),
           },
+          {
+            path: 'time-record',
+            component: () => import('pages/Payroll/TimeRecordPage.vue'),
+          },
         ],
       },
       {

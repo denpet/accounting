@@ -3,38 +3,42 @@ import { Ref, ref } from 'vue'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
-export type AccountObject = {
+export type TimeRecordObject = {
   id: number | null
-  name: string
-  type: string
+  employee_id: number
+  biometric_timestamp: string | null
+  biometric_status: number | null
+  biometric_status_name: string | null
+  adjusted_timestamp: string
+  hide: number
 }
 
-export type AccountErrors = {
+export type TimeRecordErrors = {
   id?: string
-  name?: string
-  type?: string
+  employee_id?: string
+  biometric_timestamp?: string
+  biometric_status?: string
+  adjusted_timestamp?: string
+  hide?: string
 }
 
-type AccountFilter = {
-  name?: string
-  type?: string
+type TimeRecordFilter = {
+  week?: string
 }
 
-export const useAccountingAccountStore = defineStore(
-  'accounting/account',
+export const usePayrollTimeRecordStore = defineStore(
+  'payroll/time-record',
   () => {
     const index = ref()
-    const options = ref([])
-    const current: Ref<AccountObject | undefined> = ref()
-    const errors: Ref<AccountErrors | undefined> = ref()
-    const filter: Ref<AccountFilter> = ref({})
+    const weekOptions = ref([])
+    const current: Ref<TimeRecordObject[]> = ref([])
+    const errors: Ref<TimeRecordErrors | undefined> = ref()
+    const filter: Ref<TimeRecordFilter> = ref({})
+    const employee: Ref<{ id: number; name: string } | undefined> = ref()
 
     const fetchIndex = async () => {
-      const urlParams = new URLSearchParams(
-        Object.entries(filter.value).filter((el) => el[1] !== undefined),
-      )
       return api
-        .get(`accounting/accounts?${urlParams}`)
+        .get(`payroll/time-records?week=${filter.value.week}`)
         .then((response) => {
           index.value = response.data.data
         })
@@ -48,14 +52,14 @@ export const useAccountingAccountStore = defineStore(
         })
     }
 
-    const fetchOptions = async () => {
+    const fetchWeekOptions = async () => {
       const urlParams = new URLSearchParams(
         Object.entries(filter.value).filter((el) => el[1] !== undefined),
       )
       return api
-        .get(`accounting/accounts/options?${urlParams}`)
+        .get(`payroll/time-records/week-options?${urlParams}`)
         .then((response) => {
-          options.value = response.data
+          weekOptions.value = response.data
         })
         .catch((error) => {
           Notify.create({
@@ -67,11 +71,19 @@ export const useAccountingAccountStore = defineStore(
         })
     }
 
-    const show = async (id: number) => {
+    const show = async (
+      employeeId: number,
+      week: string,
+      employeeName: string,
+    ) => {
       return api
-        .get(`accounting/accounts/${id}`)
+        .get(`payroll/time-records/${employeeId}/${week}`)
         .then((response) => {
           current.value = response.data
+          employee.value = {
+            id: employeeId,
+            name: employeeName,
+          }
           errors.value = undefined
         })
         .catch((error) => {
@@ -84,25 +96,27 @@ export const useAccountingAccountStore = defineStore(
         })
     }
 
-    const create = (prefill: AccountObject = <AccountObject>{}) => {
-      current.value = {
+    const create = (prefill: TimeRecordObject = <TimeRecordObject>{}) => {
+      current.value.push({
         ...{
-          name: '',
-          type: '',
+          id: null,
+          biometric_timestamp: null,
+          biometric_status: null,
+          adjusted_timestamp: null,
+          hide: false,
         },
         ...prefill,
-      }
+      })
     }
 
     const store = async () => {
-      if (!current.value) throw new Error('No account')
+      if (!current.value) throw new Error('No time-record')
       errors.value = undefined
       return api
-        .post('accounting/accounts', current.value)
+        .post('payroll/time-records', current.value)
         .then((response) => {
-          if (current.value) current.value.id = response.data.id
+          if (current.value) current.value = response.data
           fetchIndex()
-          fetchOptions()
           Notify.create({
             message: 'Stored',
             type: 'positive',
@@ -119,10 +133,9 @@ export const useAccountingAccountStore = defineStore(
     const update = async (id: number) => {
       errors.value = undefined
       return api
-        .put(`accounting/accounts/${id}`, current.value)
+        .put(`payroll/time-records/${id}`, current.value)
         .then(() => {
           fetchIndex()
-          fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -138,10 +151,9 @@ export const useAccountingAccountStore = defineStore(
 
     const destroy = async (id: number) => {
       return api
-        .delete(`accounting/accounts/${id}`)
+        .delete(`payroll/time-records/${id}`)
         .then(() => {
           fetchIndex()
-          fetchOptions()
           Notify.create({
             message: 'Updated',
             type: 'positive',
@@ -162,7 +174,7 @@ export const useAccountingAccountStore = defineStore(
 
     return {
       fetchIndex,
-      fetchOptions,
+      fetchWeekOptions,
       show,
       create,
       store,
@@ -170,8 +182,9 @@ export const useAccountingAccountStore = defineStore(
       destroy,
       index,
       filter,
-      options,
+      weekOptions,
       current,
+      employee,
       errors,
     }
   },

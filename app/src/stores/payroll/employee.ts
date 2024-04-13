@@ -84,7 +84,6 @@ export const usePayrollEmployeeStore = defineStore('payroll/employee', () => {
   }
 
   const create = (prefill: EmployeeObject = <EmployeeObject>{}) => {
-    const id = self.crypto.randomUUID()
     current.value = {
       ...{
         name: '',
@@ -92,7 +91,6 @@ export const usePayrollEmployeeStore = defineStore('payroll/employee', () => {
       },
       ...prefill,
     }
-    return id
   }
 
   const store = async () => {

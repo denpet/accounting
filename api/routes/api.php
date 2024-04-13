@@ -53,6 +53,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('employees/options', [EmployeeController::class, 'options']);
         Route::apiResource('employees', EmployeeController::class);
 
+        Route::get('time-records/week-options', [TimeRecordController::class, 'weekOptions']);
+        Route::get('time-records/{employeeId}/{weekOf}', [TimeRecordController::class, 'showEmployeeWeek']);
         Route::apiResource('time-records', TimeRecordController::class);
     });
 
