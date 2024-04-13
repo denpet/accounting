@@ -5,8 +5,9 @@ namespace App\Console\Commands;
 use App\Models\Payroll\Employee;
 use App\Models\Payroll\TimeRecord;
 use App\Services\ZKTecoService;
-use App\ZKLibrary\ZKLib;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
+use Throwable;
 
 class ZKTecoSync extends Command
 {
@@ -31,28 +32,37 @@ class ZKTecoSync extends Command
     {
         $zk->connect(config('eden.zk_host'), config('eden.zk_port', 4370));
 
-        /* Get Users */
-        $users = $zk->getUser();
-        foreach ($users as $user) {
-            $employee = Employee::find($user[0]) ?: Employee::create(['id' => $user[0], 'name' => $user[1], 'rate' => 0, 'active' => 2]);
-            $employee->name = $user[1];
-            $employee->save();
-        }
+        $zk->disableDevice();
+        DB::beginTransaction();
+        try {
+            /* Get Users */
+            $users = $zk->getUser();
+            foreach ($users as $user) {
+                $employee = Employee::find($user[0]) ?: Employee::create(['id' => $user[0], 'name' => $user[1], 'rate' => 0, 'active' => 2]);
+                $employee->name = $user[1];
+                $employee->save();
+            }
 
-        /* Get Attendance */
-        $attendances = $zk->getAttendance();
-        foreach ($attendances as $attendance) {
-            TimeRecord::create(
-                [
-                    'zk_id' => $attendance[0],
-                    'employee_id' => $attendance[1],
-                    'biometric_status' => $attendance[2],
-                    'biometric_timestamp' => $attendance[3],
-                    'hide' => false,
-                    'adjusted_timestamp' => $attendance[3]
-                ]
-            );
+            /* Get Attendance */
+            $attendances = $zk->getAttendance();
+            foreach ($attendances as $attendance) {
+                TimeRecord::create(
+                    [
+                        'zk_id' => $attendance[0],
+                        'employee_id' => $attendance[1],
+                        'biometric_status' => $attendance[2],
+                        'biometric_timestamp' => $attendance[3],
+                        'hide' => false,
+                        'adjusted_timestamp' => $attendance[3]
+                    ]
+                );
+            }
+            $zk->clearAttendance();
+            DB::commit();
+        } catch (Throwable $e) {
+            DB::rollback();
         }
+        $zk->enableDevice();
         $zk->disconnect();
     }
 }
