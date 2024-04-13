@@ -42,18 +42,16 @@ class ZKTecoSync extends Command
         /* Get Attendance */
         $attendances = $zk->getAttendance();
         foreach ($attendances as $attendance) {
-            if ($attendance[1] !== 0) {
-                TimeRecord::create(
-                    [
-                        'zk_id' => $attendance[0],
-                        'employee_id' => $attendance[1],
-                        'biometric_status' => $attendance[2],
-                        'biometric_timestamp' => $attendance[3],
-                        'hide' => false,
-                        'adjusted_timestamp' => $attendance[3]
-                    ]
-                );
-            }
+            TimeRecord::create(
+                [
+                    'zk_id' => $attendance[0],
+                    'employee_id' => $attendance[1],
+                    'biometric_status' => $attendance[2],
+                    'biometric_timestamp' => $attendance[3],
+                    'hide' => false,
+                    'adjusted_timestamp' => $attendance[3]
+                ]
+            );
         }
         $zk->disconnect();
     }
