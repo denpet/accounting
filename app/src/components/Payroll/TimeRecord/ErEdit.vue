@@ -3,86 +3,82 @@
     <p class="col-12">
       {{ timeRecordStore.employee?.name }}
     </p>
-    <q-scroll-area class="col-7 full-height">
-      <q-markup-table>
-        <tr>
-          <th>Bio Timestamp</th>
-          <th>Bio Status</th>
-          <th>Timestamp</th>
-          <th>Hidden</th>
-        </tr>
-        <tr v-for="(current, index) in timeRecordStore.current" :key="index">
-          <td>{{ current.biometric_timestamp }}</td>
-          <td>{{ current.biometric_status_name }}</td>
-          <td>
-            <q-input label="Timestamp" v-model="current.adjusted_timestamp">
-              <template v-slot:append>
-                <q-icon name="access_time" class="cursor-pointer">
-                  <q-popup-proxy
-                    cover
-                    transition-show="scale"
-                    transition-hide="scale"
-                  >
-                    <div class="q-gutter-md row items-start">
-                      <q-date
-                        v-model="current.adjusted_timestamp"
-                        mask="YYYY-MM-DD HH:mm"
-                        color="purple"
-                      />
-                      <q-time
-                        v-model="current.adjusted_timestamp"
-                        mask="YYYY-MM-DD HH:mm"
-                        color="purple"
-                        format24h
-                      />
-                    </div>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-          </td>
-          <td>
-            <q-toggle
-              label="Show"
-              v-model.number="current.hide"
-              :false-value="1"
-              :true-value="0"
-            />
-          </td>
-        </tr>
-        <q-tr>
-          <q-td />
-          <q-td />
-          <q-td>
-            <q-btn @click="onAddTime" round color="primary" icon="mdi-plus" />
-          </q-td>
-        </q-tr>
-        <q-tr>
-          <q-td>
-            <q-btn label="Submit" @click="onSubmit" color="positive" />
-          </q-td>
-        </q-tr>
-      </q-markup-table>
-    </q-scroll-area>
-    <q-scroll-area class="col-5 full-height">
-      <q-markup-table>
-        <q-tr>
-          <q-th>Check in</q-th>
-          <q-th>check out</q-th>
-          <q-th align="right">Time worked</q-th>
-        </q-tr>
-        <q-tr v-for="(time, index) in payroll.rows" :key="index">
-          <q-td>{{ time.in }}</q-td>
-          <q-td>{{ time.out }}</q-td>
-          <q-td align="right">{{ time.time }}</q-td>
-        </q-tr>
-        <q-tr>
-          <q-td />
-          <q-td align="right">Total</q-td>
-          <q-td align="right">{{ payroll.total }}</q-td>
-        </q-tr>
-      </q-markup-table>
-    </q-scroll-area>
+    <q-markup-table class="col-7">
+      <tr>
+        <th>Bio Timestamp</th>
+        <th>Bio Status</th>
+        <th>Timestamp</th>
+        <th>Hidden</th>
+      </tr>
+      <tr v-for="(current, index) in timeRecordStore.current" :key="index">
+        <td>{{ current.biometric_timestamp }}</td>
+        <td>{{ current.biometric_status_name }}</td>
+        <td>
+          <q-input label="Timestamp" v-model="current.adjusted_timestamp">
+            <template v-slot:append>
+              <q-icon name="access_time" class="cursor-pointer">
+                <q-popup-proxy
+                  cover
+                  transition-show="scale"
+                  transition-hide="scale"
+                >
+                  <div class="q-gutter-md row items-start">
+                    <q-date
+                      v-model="current.adjusted_timestamp"
+                      mask="YYYY-MM-DD HH:mm"
+                      color="purple"
+                    />
+                    <q-time
+                      v-model="current.adjusted_timestamp"
+                      mask="YYYY-MM-DD HH:mm"
+                      color="purple"
+                      format24h
+                    />
+                  </div>
+                </q-popup-proxy>
+              </q-icon>
+            </template>
+          </q-input>
+        </td>
+        <td>
+          <q-toggle
+            label="Show"
+            v-model.number="current.hide"
+            :false-value="1"
+            :true-value="0"
+          />
+        </td>
+      </tr>
+      <q-tr>
+        <q-td />
+        <q-td />
+        <q-td>
+          <q-btn @click="onAddTime" round color="primary" icon="mdi-plus" />
+        </q-td>
+      </q-tr>
+      <q-tr>
+        <q-td>
+          <q-btn label="Submit" @click="onSubmit" color="positive" />
+        </q-td>
+      </q-tr>
+    </q-markup-table>
+    <q-markup-table class="col-5">
+      <q-tr>
+        <q-th>Check in</q-th>
+        <q-th>check out</q-th>
+        <q-th align="right">Time worked</q-th>
+      </q-tr>
+      <q-tr v-for="(time, index) in payroll.rows" :key="index">
+        <q-td>{{ time.in }}</q-td>
+        <q-td>{{ time.out }}</q-td>
+        <q-td align="right">{{ time.time }}</q-td>
+      </q-tr>
+      <q-tr>
+        <q-td />
+        <q-td align="right">Total</q-td>
+        <q-td align="right">{{ payroll.total }}</q-td>
+      </q-tr>
+    </q-markup-table>
   </div>
 </template>
 

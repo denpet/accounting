@@ -11,17 +11,11 @@
     <div class="row">
       <ErIndex
         v-if="!$q.platform.is.mobile || timeRecordStore.current.length == 0"
-        :class="[
-          $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-3 q-px-md',
-          '',
-        ]"
+        :class="[$q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-3 q-px-md']"
       />
       <ErEdit
         v-if="timeRecordStore.current.length > 0"
-        :class="[
-          $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-9 q-px-md',
-          '',
-        ]"
+        :class="[$q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-9 q-px-md']"
       />
     </div>
   </q-page>
