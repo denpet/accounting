@@ -1,19 +1,29 @@
 <template>
-  <q-page class="row">
-    <ErIndex
-      v-if="!$q.platform.is.mobile || timeRecordStore.current.length == 0"
-      :class="[
-        $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-3 q-px-md',
-        '',
-      ]"
-    />
-    <ErEdit
-      v-if="timeRecordStore.current.length > 0"
-      :class="[
-        $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-9 q-px-md',
-        '',
-      ]"
-    />
+  <q-page>
+    <router-link
+      v-if="timeRecordStore.filter.week"
+      :to="`/api/payroll/print/${timeRecordStore.filter.week}`"
+      target="_blank"
+      class="col-12"
+    >
+      <q-btn label="Download payroll" color="primary" icon="mdi-download-box" />
+    </router-link>
+    <div class="row">
+      <ErIndex
+        v-if="!$q.platform.is.mobile || timeRecordStore.current.length == 0"
+        :class="[
+          $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-3 q-px-md',
+          '',
+        ]"
+      />
+      <ErEdit
+        v-if="timeRecordStore.current.length > 0"
+        :class="[
+          $q.platform.is.mobile ? 'col-12 q-pa-none' : 'col-9 q-px-md',
+          '',
+        ]"
+      />
+    </div>
   </q-page>
 </template>
 

@@ -50,6 +50,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::group(['prefix' => 'payroll'], function () {
+        Route::get('print/{weekOf}', [TimeRecordController::class, 'payroll']);
+
         Route::get('employees/options', [EmployeeController::class, 'options']);
         Route::apiResource('employees', EmployeeController::class);
 
