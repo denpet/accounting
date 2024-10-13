@@ -23,14 +23,14 @@ export type TimeRecordErrors = {
 }
 
 type TimeRecordFilter = {
-  week?: string
+  period?: string
 }
 
 export const usePayrollTimeRecordStore = defineStore(
   'payroll/time-record',
   () => {
     const index = ref()
-    const weekOptions = ref([])
+    const periods = ref([])
     const current: Ref<TimeRecordObject[]> = ref([])
     const errors: Ref<TimeRecordErrors | undefined> = ref()
     const filter: Ref<TimeRecordFilter> = ref({})
@@ -38,7 +38,7 @@ export const usePayrollTimeRecordStore = defineStore(
 
     const fetchIndex = async () => {
       return api
-        .get(`payroll/time-records?week=${filter.value.week}`)
+        .get(`payroll/time-records?from=${filter.value.period}`)
         .then((response) => {
           index.value = response.data.data
         })
@@ -52,14 +52,14 @@ export const usePayrollTimeRecordStore = defineStore(
         })
     }
 
-    const fetchWeekOptions = async () => {
+    const fetchPeriods = async () => {
       const urlParams = new URLSearchParams(
         Object.entries(filter.value).filter((el) => el[1] !== undefined),
       )
       return api
-        .get(`payroll/time-records/week-options?${urlParams}`)
+        .get(`payroll/time-records/periods?${urlParams}`)
         .then((response) => {
-          weekOptions.value = response.data
+          periods.value = response.data
         })
         .catch((error) => {
           Notify.create({
@@ -73,11 +73,11 @@ export const usePayrollTimeRecordStore = defineStore(
 
     const show = async (
       employeeId: number,
-      week: string,
+      from: string,
       employeeName: string,
     ) => {
       return api
-        .get(`payroll/time-records/${employeeId}/${week}`)
+        .get(`payroll/time-records/${employeeId}/${from}`)
         .then((response) => {
           current.value = response.data
           employee.value = {
@@ -174,7 +174,7 @@ export const usePayrollTimeRecordStore = defineStore(
 
     return {
       fetchIndex,
-      fetchWeekOptions,
+      fetchPeriods,
       show,
       create,
       store,
@@ -182,7 +182,7 @@ export const usePayrollTimeRecordStore = defineStore(
       destroy,
       index,
       filter,
-      weekOptions,
+      periods,
       current,
       employee,
       errors,

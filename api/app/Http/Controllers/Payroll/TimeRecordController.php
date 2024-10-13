@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Payroll;
 use App\Http\Controllers\RestController;
 use App\Models\Payroll\TimeRecord;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -28,7 +29,7 @@ class TimeRecordController extends RestController
     protected static $with = ['employee:id,name', 'biometricStatus:id,name'];
     protected static $orderBy = ['employee_id', 'biometric_timestamp'];
 
-    public function weekOptions()
+    public function periods()
     {
         $range = DB::selectOne(
             "SELECT MIN(adjusted_timestamp) AS first_date, 
@@ -37,18 +38,17 @@ class TimeRecordController extends RestController
         );
 
         /* Get first day of week for min and max */
-        $firstWeek = strtotime(Date('Y-m-d', strtotime('Last Saturday', strtotime($range->first_date))));
-        $today = Date('w', strtotime($range->last_date));
-        if ($today != 6) {
-            $lastWeek = strtotime(Date('Y-m-d', strtotime('Next Saturday', strtotime($range->last_date))));
-        } else {
-            $lastWeek = strtotime($range->last_date);
-        }
+        $startMonth = Date('Y-m', strtotime($range->first_date));
+        $lastMonth = Date('Y-m', strtotime($range->last_date));
         $data = [];
-        for ($date = $lastWeek; $date >= $firstWeek; $date -= 7 * 86400) {
+        for ($month = $lastMonth; $month >= $startMonth; $month = Date('Y-m', strtotime("$month Previous month"))) {
             $data[] = [
-                'value' => Date('Y-m-d', $date),
-                'label' => Date('Y-m-d', $date) . " - " . Date('Y-m-d', strtotime('Next Friday', $date))
+                'value' => Date('Y-m-16', strtotime($month)),
+                'label' => Date('Y-m-16', strtotime($month)) . " - " . Date('Y-m-t', strtotime($month))
+            ];
+            $data[] = [
+                'value' => Date('Y-m-01', strtotime($month)),
+                'label' => Date('Y-m-01', strtotime($month)) . " - " . Date('Y-m-15', strtotime($month))
             ];
         }
         return $data;
@@ -56,25 +56,26 @@ class TimeRecordController extends RestController
 
     public function index()
     {
-        $weekOf = Request::input('week', false);
-        $from = "$weekOf 00:00:00";
-        $to = Date('Y-m-d', strtotime('Next Friday', strtotime($weekOf))) . " 23:59:59";
+        $from = Request::input('from', false);
+        Log::debug("from: $from");
+        Log::debug(Date('d', strtotime($from)));
+        $to = Date('d', strtotime($from)) < 16 ? Date('Y-m-15', strtotime($from)) : Date('Y-m-t', strtotime($from));
+        Log::debug("to: $to");
         return ['data' => DB::select(
             "SELECT DISTINCT employee_id,
                 e.name,
-                :week as week
+                :period as period
             FROM eden.time_records tr
             JOIN eden.employees e ON e.id=tr.employee_id
             WHERE adjusted_timestamp BETWEEN :from AND :to
             ORDER BY e.name",
-            ['from' => $from, 'to' => $to, 'week' => $weekOf]
+            ['from' => "$from 00:00:00", 'to' => "$to 23:59:59", 'period' => $from]
         )];
     }
 
-    public function showEmployeeWeek($employeeId, $weekOf)
+    public function showEmployeePeriod($employeeId, $from)
     {
-        $from = "$weekOf 00:00:00";
-        $to = Date('Y-m-d', strtotime('Next Friday', strtotime($weekOf))) . " 23:59:59";
+        $to = Date('d', strtotime($from)) < 16 ? Date('Y-m-15', strtotime($from)) : Date('Y-m-t', strtotime($from));
         return DB::select(
             "SELECT tr.*,
                 bs.name AS biometric_status_name
@@ -83,7 +84,7 @@ class TimeRecordController extends RestController
             WHERE employee_id=:employeeId
                 AND adjusted_timestamp BETWEEN :from AND :to
             ORDER BY adjusted_timestamp",
-            ['employeeId' => $employeeId, 'from' => $from, 'to' => $to]
+            ['employeeId' => $employeeId, 'from' => "$from 00:00:00", 'to' => "$to 23:59:59"]
         );
     }
 
@@ -113,11 +114,10 @@ class TimeRecordController extends RestController
         }
     }
 
-    public function payroll($weekOf)
+    public function payroll($from)
     {
         /* Select all record within range */
-        $from = "$weekOf 00:00:00";
-        $to = Date('Y-m-d', strtotime('Next Friday', strtotime($weekOf))) . " 23:59:59";
+        $to = Date('d', strtotime($from)) < 16 ? Date('Y-m-15', strtotime($from)) : Date('Y-m-t', strtotime($from));
 
         $result = DB::select(
             "SELECT *
@@ -126,7 +126,7 @@ class TimeRecordController extends RestController
             WHERE e.active != 0
 	            AND adjusted_timestamp BETWEEN :from AND :to
             ORDER BY e.active, e.name, e.id, adjusted_timestamp",
-            ['from' => $from, 'to' => $to]
+            ['from' => "$from 00:00:00", 'to' => "$to 23:59:59"]
         );
 
         $prevRow = $result[0];
@@ -228,7 +228,7 @@ class TimeRecordController extends RestController
                 ->setWidth(25);
             $objPHPExcel->getActiveSheet()
                 ->setCellValue('A1', "P A Y R O L L")
-                ->setCellValue('A2', "For the period of $weekOf to " . Date('Y-m-d', strtotime($weekOf) + 604799))
+                ->setCellValue('A2', "For the period of $from to $to")
                 ->setCellValue('A3', "WE HEREBY ACKKNOWLEDGE to have received from CEBU GARDEN OF EDEN RESORT, INC,   LILOAN, SANTANDER, CEBU")
                 ->setCellValue('A4', "the sum specified opposite our respective names, as full compensation for services rendered.")
                 ->setCellValue('A5', "NAME OF EMPLOYEE")
@@ -350,7 +350,7 @@ class TimeRecordController extends RestController
                 ->setWidth(25);
             $objPHPExcel->getActiveSheet()
                 ->setCellValue('A1', "C O N T R A C T O R   P A Y O U T")
-                ->setCellValue('A2', "For the period of $weekOf to " . Date('Y-m-d', strtotime($weekOf) + 604799))
+                ->setCellValue('A2', "For the period of $from to $to")
                 ->setCellValue('A3', "WE HEREBY ACKKNOWLEDGE to have received from CEBU GARDEN OF EDEN RESORT, INC,   LILOAN, SANTANDER, CEBU")
                 ->setCellValue('A4', "the sum specified opposite our respective names, as full compensation for services rendered.")
                 ->setCellValue('A5', "NAME OF CONTRACTOR")

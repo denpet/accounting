@@ -1,8 +1,8 @@
 <template>
   <q-page>
     <router-link
-      v-if="timeRecordStore.filter.week"
-      :to="`/api/payroll/print/${timeRecordStore.filter.week}`"
+      v-if="timeRecordStore.filter.period"
+      :to="`/api/payroll/print/${timeRecordStore.filter.period}`"
       target="_blank"
       class="col-12"
     >

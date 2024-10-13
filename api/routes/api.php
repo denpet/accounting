@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\AccountController;
+use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
 use App\Http\Controllers\Payroll\EmployeeController;
@@ -35,6 +36,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('transactions/upload', [TransactionController::class, 'uploadImage']);
         Route::get('transactions/image/{id}', [TransactionController::class, 'showImage']);
         Route::apiResource('transactions', TransactionController::class);
+
+        Route::get('reports/ledger', [ReportController::class, 'ledger']);
+        Route::get('reports/balance', [ReportController::class, 'balance']);
     });
 
     Route::group(['prefix' => 'global'], function () {
@@ -50,13 +54,13 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
 
     Route::group(['prefix' => 'payroll'], function () {
-        Route::get('print/{weekOf}', [TimeRecordController::class, 'payroll']);
+        Route::get('print/{from}', [TimeRecordController::class, 'payroll']);
 
         Route::get('employees/options', [EmployeeController::class, 'options']);
         Route::apiResource('employees', EmployeeController::class);
 
-        Route::get('time-records/week-options', [TimeRecordController::class, 'weekOptions']);
-        Route::get('time-records/{employeeId}/{weekOf}', [TimeRecordController::class, 'showEmployeeWeek']);
+        Route::get('time-records/periods', [TimeRecordController::class, 'periods']);
+        Route::get('time-records/{employeeId}/{from}', [TimeRecordController::class, 'showEmployeePeriod']);
         Route::apiResource('time-records', TimeRecordController::class);
     });
 

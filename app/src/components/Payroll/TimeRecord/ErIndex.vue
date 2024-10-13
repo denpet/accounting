@@ -13,9 +13,9 @@
     </template>
     <template #top-right>
       <q-select
-        v-model="timeRecordStore.filter.week"
-        label="Week"
-        :options="timeRecordStore.weekOptions"
+        v-model="timeRecordStore.filter.period"
+        label="Period"
+        :options="timeRecordStore.periods"
         map-options
         emit-value
         style="width: 25vh; max-width: 25vh"
@@ -31,13 +31,13 @@ import { usePayrollTimeRecordStore } from 'stores/payroll/time-record'
 import { QTableColumn } from 'quasar'
 
 const timeRecordStore = usePayrollTimeRecordStore()
-timeRecordStore.fetchWeekOptions()
+timeRecordStore.fetchPeriods()
 
 const onShow = (
   event: Event,
-  row: { week: string; employee_id: number; name: string },
+  row: { period: string; employee_id: number; name: string },
 ) => {
-  timeRecordStore.show(row.employee_id, row.week, row.name)
+  timeRecordStore.show(row.employee_id, row.period, row.name)
 }
 
 const columns: QTableColumn[] = [
