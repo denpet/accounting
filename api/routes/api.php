@@ -37,8 +37,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('transactions/image/{id}', [TransactionController::class, 'showImage']);
         Route::apiResource('transactions', TransactionController::class);
 
-        Route::get('reports/ledger', [ReportController::class, 'ledger']);
-        Route::get('reports/balance', [ReportController::class, 'balance']);
+        Route::get('report/ledger', [ReportController::class, 'ledger']);
+        Route::get('report/balance', [ReportController::class, 'balance']);
     });
 
     Route::group(['prefix' => 'global'], function () {

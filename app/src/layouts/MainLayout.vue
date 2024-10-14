@@ -83,6 +83,36 @@
                 <q-item-label>Transaction</q-item-label>
               </q-item-section>
             </q-item>
+            <q-expansion-item
+              v-if="auth.current.role_id === 1"
+              icon="mdi-note"
+              label="Report"
+            >
+              <q-list class="q-pl-lg">
+                <q-item
+                  to="/accounting/report/balance"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-scale-balance" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Balance</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/accounting/report/ledger"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-cash" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Ledger</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </q-list>
         </q-expansion-item>
         <q-expansion-item
