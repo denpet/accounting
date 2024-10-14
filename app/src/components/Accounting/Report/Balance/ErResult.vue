@@ -27,6 +27,7 @@ import { format } from 'boot/format'
 import { useAccountingReportStore } from 'stores/accounting/report'
 
 const reportStore = useAccountingReportStore()
+
 const columns: QTableColumn[] = [
   {
     name: 'name',

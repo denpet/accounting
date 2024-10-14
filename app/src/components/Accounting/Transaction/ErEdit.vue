@@ -127,10 +127,11 @@ import {
 import { useAccountingAccountStore } from 'stores/accounting/account'
 import { computed, onMounted } from 'vue'
 import { Cookies } from 'quasar'
+import { useAuthStore } from 'src/stores/auth'
 
 const uploadApi = process.env.API + '/api/accounting/transactions'
-
 const transactionStore = useAccountingTransactionStore()
+const auth = useAuthStore()
 
 const onCreate = () => {
   transactionStore.create(<TransactionObject>{
@@ -152,18 +153,28 @@ onMounted(() => {
 })
 
 const fromAccountOptions = computed(() => {
-  return accountStore.options.filter((value: { value: number }) => {
-    return [1, 3, 38, 39].includes(value.value)
-  })
+  return auth.current.id == 1
+    ? accountStore.options.filter((value: { value: number }) => {
+        return [1, 3, 38, 39].includes(value.value)
+      })
+    : accountStore.options.filter((value: { value: number }) => {
+        return [1, 3].includes(value.value)
+      })
 })
 
 const toAccountOptions = computed(() => {
-  return accountStore.options.filter((value: { value: number }) => {
-    return [
-      9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 38, 39, 44, 48, 49, 51, 53,
-      54,
-    ].includes(value.value)
-  })
+  return auth.current.id == 1
+    ? accountStore.options.filter((value: { value: number }) => {
+        return [
+          1, 3, 9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 38, 39, 44, 48,
+          49, 51, 53, 54,
+        ].includes(value.value)
+      })
+    : accountStore.options.filter((value: { value: number }) => {
+        return [
+          9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 44, 48, 49, 51, 53, 54,
+        ].includes(value.value)
+      })
 })
 
 const onSubmit = () => {

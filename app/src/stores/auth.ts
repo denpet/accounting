@@ -3,6 +3,7 @@ import { Ref, ref } from 'vue'
 import { api, web } from 'boot/axios'
 
 type Auth = {
+  id: number
   email: string
   password: string
   user_name: string
@@ -17,6 +18,7 @@ type AuthError = {
 
 export const useAuthStore = defineStore('auth', () => {
   const current: Ref<Auth> = ref({
+    id: 0,
     email: '',
     password: '',
     user_name: '',
@@ -58,6 +60,7 @@ export const useAuthStore = defineStore('auth', () => {
   const logout = async () => {
     return api.post('logout').then(() => {
       current.value = {
+        id: 0,
         email: '',
         password: '',
         user_name: '',
