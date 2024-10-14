@@ -155,7 +155,7 @@ onMounted(() => {
 const fromAccountOptions = computed(() => {
   return auth.current.id == 1
     ? accountStore.options.filter((value: { value: number }) => {
-        return [1, 3, 38, 39].includes(value.value)
+        return [1, 3, 33, 38, 39].includes(value.value)
       })
     : accountStore.options.filter((value: { value: number }) => {
         return [1, 3].includes(value.value)
@@ -166,8 +166,8 @@ const toAccountOptions = computed(() => {
   return auth.current.id == 1
     ? accountStore.options.filter((value: { value: number }) => {
         return [
-          1, 3, 9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 38, 39, 44, 48,
-          49, 51, 53, 54,
+          1, 3, 9, 10, 11, 12, 13, 14, 15, 19, 20, 22, 23, 28, 29, 38, 39, 44,
+          48, 49, 51, 53, 54,
         ].includes(value.value)
       })
     : accountStore.options.filter((value: { value: number }) => {
