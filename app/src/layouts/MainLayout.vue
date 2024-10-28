@@ -101,11 +101,22 @@
                   </q-item-section>
                 </q-item>
                 <q-item
-                  to="/accounting/report/ledger"
+                  to="/accounting/report/result"
                   active-class="q-item-no-link-highlighting"
                 >
                   <q-item-section avatar>
                     <q-icon name="mdi-cash" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Result</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/accounting/report/ledger"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-book" />
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Ledger</q-item-label>

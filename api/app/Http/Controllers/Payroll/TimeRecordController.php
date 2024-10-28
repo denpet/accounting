@@ -57,10 +57,7 @@ class TimeRecordController extends RestController
     public function index()
     {
         $from = Request::input('from', false);
-        Log::debug("from: $from");
-        Log::debug(Date('d', strtotime($from)));
         $to = Date('d', strtotime($from)) < 16 ? Date('Y-m-15', strtotime($from)) : Date('Y-m-t', strtotime($from));
-        Log::debug("to: $to");
         return ['data' => DB::select(
             "SELECT DISTINCT employee_id,
                 e.name,

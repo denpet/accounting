@@ -16,9 +16,9 @@ class ReportController extends Controller
 
         /* Get accounts */
         $tempAccounts = DB::select(
-            "SELECT id, 
-                type, 
-                name, 
+            "SELECT id,
+                type,
+                name,
                 0 AS balance
             FROM eden.accounts
             WHERE type IN ('A','L','E')
@@ -92,16 +92,83 @@ class ReportController extends Controller
             $from = Request::input('from', Date('Y-01-01'));
             $to = Request::input('to', Date('Y-12-31'));
 
+            $accounts = DB::select(
+                "SELECT id, type, name
+                FROM eden.accounts
+                ORDER BY type, name"
+            );
+
+            foreach ($accounts as &$account) {
+                $account->opening_balance = DB::selectOne(
+                    "SELECT SUM(amount) AS balance
+                    FROM eden.transactions
+                    WHERE to_account_id=:account AND date<:from",
+                    ['account' => $account->id, 'from' => $from]
+                )->balance;
+                $account->opening_balance -= DB::selectOne(
+                    "SELECT SUM(amount) AS balance
+                    FROM eden.transactions
+                    WHERE from_account_id=:account AND date<:from",
+                    ['account' => $account->id, 'from' => $from]
+                )->balance;
+                $account->closing_balance = $account->opening_balance;
+                $account->transactions = DB::select(
+                    "   SELECT date,
+                            from_account_id,
+                            from_account.name AS from_account_name,
+                            to_account_id,
+                            to_account.name AS to_account_name,
+                            note,
+                            amount
+                        FROM eden.transactions t
+                        JOIN eden.accounts from_account ON t.from_account_id=from_account.id
+                        JOIN eden.accounts to_account ON t.to_account_id=to_account.id
+                        WHERE to_account_id=:account1
+                            AND date BETWEEN :from1 AND :to1
+                    UNION
+                        SELECT date,
+                            from_account_id,
+                            from_account.name AS from_account_name,
+                            to_account_id,
+                            to_account.name AS to_account_name,
+                            note,
+                            -amount
+                        FROM eden.transactions t
+                        JOIN eden.accounts from_account ON t.from_account_id=from_account.id
+                        JOIN eden.accounts to_account ON t.to_account_id=to_account.id
+                        WHERE from_account_id=:account2
+                            AND date BETWEEN :from2 AND :to2",
+                    [
+                        'account1' => $account->id,
+                        'from1' => $from,
+                        'to1' => $to,
+                        'account2' => $account->id,
+                        'from2' => $from,
+                        'to2' => $to,
+                    ]
+                );
+                foreach ($account->transactions as $transaction) {
+                    $account->closing_balance += $transaction->to_account_id === $account->id ? $transaction->amount : -$transaction->amount;
+                }
+            }
+
+            return $accounts;
+        } catch (Throwable $e) {
+            Log::error("{$e->getFile()}:{$e->getLine()} {$e->getCode()}:{$e->getMessage()}\n{$e->getTraceAsString()}");
+            throw $e;
+        }
+    }
+
+    public function result()
+    {
+        try {
+            $from = Request::input('from', Date('Y-01-01'));
+            $to = Request::input('to', Date('Y-12-31'));
+
             $result = (object)[
-                'report' => [],
-                'total' => [
-                    'I' => 0,
-                    'C' => 0
-                ],
-                'unicenta' => [
-                    'income' => [],
-                    'total' => 0
-                ]
+                'income' => [],
+                'cost' => [],
+                'unicenta' => []
             ];
 
             /* Get accounts */
@@ -112,10 +179,17 @@ class ReportController extends Controller
                 ORDER BY type, name"
             );
             foreach ($accounts as $account) {
-                $result->report[$account->type][$account->id] = [
-                    'name' => $account->name,
-                    'amount' => 0
-                ];
+                if ($account->type === 'I') {
+                    $result->income[$account->id] = [
+                        'name' => $account->name,
+                        'amount' => 0
+                    ];
+                } else {
+                    $result->cost[$account->id] = [
+                        'name' => $account->name,
+                        'amount' => 0
+                    ];
+                }
             }
 
             /* Get all transaction up until date */
@@ -124,7 +198,7 @@ class ReportController extends Controller
                     from_account.id AS from_account_id,
                     to_account.type AS to_account_type,
                     to_account.id AS to_account_id,
-                    amount                
+                    amount
                 FROM eden.transactions t
                 JOIN accounts from_account ON t.from_account_id=from_account.id
                 JOIN accounts to_account ON t.to_account_id=to_account.id
@@ -133,20 +207,18 @@ class ReportController extends Controller
             );
             foreach ($transactions as $transaction) {
                 if ($transaction->from_account_type == 'C') {
-                    $result->report['C'][$transaction->from_account_id]['amount'] -= $transaction->amount;
-                    $result->total['C'] -= $transaction->amount;
+                    $result->cost[$transaction->from_account_id]['amount'] -= $transaction->amount;
                 } elseif ($transaction->from_account_type == 'I') {
-                    $result->report['I'][$transaction->from_account_id]['amount'] += $transaction->amount;
-                    $result->total['I'] += $transaction->amount;
+                    $result->income[$transaction->from_account_id]['amount'] += $transaction->amount;
                 }
                 if ($transaction->to_account_type == 'C') {
-                    $result->report['C'][$transaction->to_account_id]['amount'] += $transaction->amount;
-                    $result->total['C'] += $transaction->amount;
+                    $result->cost[$transaction->to_account_id]['amount'] += $transaction->amount;
                 } elseif ($transaction->to_account_type == 'I') {
-                    $result->report['I'][$transaction->to_account_id]['amount'] -= $transaction->amount;
-                    $result->total['I'] -= $transaction->amount;
+                    $result->income[$transaction->to_account_id]['amount'] -= $transaction->amount;
                 }
             }
+            $result->income = array_values($result->income);
+            $result->cost = array_values($result->cost);
 
             /* Get total sales from Unicenta */
             $tickets = DB::select(
@@ -163,12 +235,8 @@ class ReportController extends Controller
                 ['from' => "$from 00:00:00", 'to' => "$to 23:59:59"]
             );
             foreach ($tickets as $ticket) {
-                $result->unicenta['income'][] = $ticket;
-                $result->unicenta['total'] += $ticket->amount;
+                $result->unicenta[] = $ticket;
             }
-            $result->total['total'] = $result->total['I'] - $result->total['C'];
-            $result->total['totalUnicenta'] = $result->unicenta['total'] - $result->total['C'];
-
             return $result;
         } catch (Throwable $e) {
             Log::error("{$e->getFile()}:{$e->getLine()} {$e->getCode()}:{$e->getMessage()}\n{$e->getTraceAsString()}");

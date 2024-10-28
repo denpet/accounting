@@ -24,5 +24,4 @@
 import { useAccountingReportStore } from 'stores/accounting/report'
 
 const reportStore = useAccountingReportStore()
-console.log(reportStore)
 </script>

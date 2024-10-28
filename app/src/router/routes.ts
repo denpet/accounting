@@ -51,6 +51,11 @@ const routes: RouteRecordRaw[] = [
                   import('pages/Accounting/Report/BalancePage.vue'),
               },
               {
+                path: 'result',
+                component: () =>
+                  import('pages/Accounting/Report/ResultPage.vue'),
+              },
+              {
                 path: 'ledger',
                 component: () =>
                   import('pages/Accounting/Report/LedgerPage.vue'),

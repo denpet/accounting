@@ -7,8 +7,14 @@ type BalanaceFilter = {
   date?: string
 }
 
+type ResultFilter = {
+  from?: string
+  to?: string
+}
+
 type LedgerFilter = {
-  date?: string
+  from?: string
+  to?: string
 }
 
 export const useAccountingReportStore = defineStore('accounting/report', () => {
@@ -16,9 +22,16 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
   const balanceFilter: Ref<BalanaceFilter> = ref({
     date: new Date().toLocaleDateString('sv'),
   })
+  const result = ref()
+  const resultFilter: Ref<ResultFilter> = ref({
+    from: '2024-10-01',
+    to: new Date().toLocaleDateString('sv'),
+  })
+
   const ledger = ref()
   const ledgerFilter: Ref<LedgerFilter> = ref({
-    date: new Date().toLocaleDateString('sv'),
+    from: '2024-10-01',
+    to: new Date().toLocaleDateString('sv'),
   })
 
   const fetchBalance = async () => {
@@ -40,14 +53,33 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
       })
   }
 
+  const fetchResult = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(resultFilter.value).filter((el) => el[1] !== undefined),
+    )
+    return api
+      .get(`accounting/report/result?${urlParams}`)
+      .then((response) => {
+        result.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
+        })
+      })
+  }
+
   const fetchLedger = async () => {
     const urlParams = new URLSearchParams(
       Object.entries(ledgerFilter.value).filter((el) => el[1] !== undefined),
     )
     return api
-      .get(`accounting/report/ledger${urlParams}`)
+      .get(`accounting/report/ledger?${urlParams}`)
       .then((response) => {
-        ledger.value = response.data.data
+        ledger.value = response.data
       })
       .catch((error) => {
         Notify.create({
@@ -63,6 +95,9 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
     balanceFilter,
     balance,
     fetchBalance,
+    resultFilter,
+    result,
+    fetchResult,
     ledgerFilter,
     ledger,
     fetchLedger,

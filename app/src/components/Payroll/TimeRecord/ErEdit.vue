@@ -128,7 +128,7 @@ const payroll = computed(() => {
         payroll.rows.push({
           in: time.adjusted_timestamp,
           out: '',
-          time: 10,
+          time: 0,
         })
       } else {
         payroll.rows[payroll.rows.length - 1].out = time.adjusted_timestamp
@@ -136,7 +136,7 @@ const payroll = computed(() => {
           new Date(payroll.rows[payroll.rows.length - 1].out).valueOf() -
           new Date(payroll.rows[payroll.rows.length - 1].in).valueOf()
         payroll.rows[payroll.rows.length - 1].time =
-          Math.round(elapsed / 360000) / 10
+          Math.round(elapsed / 36000) / 100
         payroll.total += elapsed
       }
       checkIn = !checkIn
