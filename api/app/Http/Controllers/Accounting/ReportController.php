@@ -149,7 +149,7 @@ class ReportController extends Controller
                     ]
                 );
                 foreach ($account->transactions as $transaction) {
-                    $account->closing_balance += $transaction->to_account_id === $account->id ? $transaction->amount : -$transaction->amount;
+                    $account->closing_balance += $transaction->amount;
                 }
             }
 
