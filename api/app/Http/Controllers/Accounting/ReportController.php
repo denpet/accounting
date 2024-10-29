@@ -137,7 +137,8 @@ class ReportController extends Controller
                         JOIN eden.accounts from_account ON t.from_account_id=from_account.id
                         JOIN eden.accounts to_account ON t.to_account_id=to_account.id
                         WHERE from_account_id=:account2
-                            AND date BETWEEN :from2 AND :to2",
+                            AND date BETWEEN :from2 AND :to2
+                    ORDER BY date",
                     [
                         'account1' => $account->id,
                         'from1' => $from,
