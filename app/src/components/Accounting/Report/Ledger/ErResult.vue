@@ -1,5 +1,9 @@
 <template>
-  <q-table :rows="reportStore.ledger" :columns="columns" hide-bottom>
+  <q-table
+    :rows="reportStore.ledger"
+    :columns="columns"
+    :rows-per-page-options="[0, 10]"
+  >
     <template #header="header">
       <q-tr :props="header">
         <q-th style="width: 1em !important" />
