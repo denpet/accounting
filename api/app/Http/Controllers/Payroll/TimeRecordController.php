@@ -32,7 +32,7 @@ class TimeRecordController extends RestController
     public function periods()
     {
         $range = DB::selectOne(
-            "SELECT MIN(adjusted_timestamp) AS first_date, 
+            "SELECT MIN(adjusted_timestamp) AS first_date,
                 MAX(adjusted_timestamp) AS last_date
             FROM eden.time_records"
         );
@@ -122,6 +122,7 @@ class TimeRecordController extends RestController
             JOIN eden.employees e ON e.id=tr.employee_id
             WHERE e.active != 0
 	            AND adjusted_timestamp BETWEEN :from AND :to
+                AND NOT tr.hide
             ORDER BY e.active, e.name, e.id, adjusted_timestamp",
             ['from' => "$from 00:00:00", 'to' => "$to 23:59:59"]
         );
