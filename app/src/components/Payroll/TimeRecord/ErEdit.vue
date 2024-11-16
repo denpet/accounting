@@ -37,6 +37,14 @@
                   </div>
                 </q-popup-proxy>
               </q-icon>
+              <q-chip
+                v-if="
+                  current.adjusted_timestamp !== current.biometric_timestamp
+                "
+                color="red"
+              >
+                Manual
+              </q-chip>
             </template>
           </q-input>
         </td>
