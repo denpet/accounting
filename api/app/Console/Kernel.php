@@ -13,6 +13,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule): void
     {
         $schedule->command('zkteco:sync')->everyTenMinutes();
+        $schedule->command('unicenta:import-close-cash')->dailyAt('02:00');
     }
 
     /**
