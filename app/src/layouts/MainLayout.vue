@@ -83,6 +83,17 @@
                 <q-item-label>Transaction</q-item-label>
               </q-item-section>
             </q-item>
+            <q-item
+              to="/accounting/cash"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-cash-multiple" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Cash</q-item-label>
+              </q-item-section>
+            </q-item>
             <q-expansion-item
               v-if="auth.current.role_id === 1"
               icon="mdi-note"

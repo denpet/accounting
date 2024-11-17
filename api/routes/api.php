@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Accounting\AccountController;
+use App\Http\Controllers\Accounting\CashController;
 use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
@@ -36,6 +37,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('transactions/upload', [TransactionController::class, 'uploadImage']);
         Route::get('transactions/image/{id}', [TransactionController::class, 'showImage']);
         Route::apiResource('transactions', TransactionController::class);
+
+        Route::apiResource('cash', CashController::class);
 
         Route::get('report/balance', [ReportController::class, 'balance']);
         Route::get('report/result', [ReportController::class, 'result']);
