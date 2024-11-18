@@ -6,7 +6,15 @@
       @click="onCreateTransaction"
       icon="mdi-cash-register"
       color="grey"
-      style="width: 90%; height: 100px; margin: 5%"
+      style="width: 100%; height: 100px; margin-bottom: 50px"
+    />
+    <q-btn
+      v-if="auth.current.role_id === 1"
+      label="Report Cash"
+      @click="onReportCash"
+      icon="mdi-cash-multiple"
+      color="grey"
+      style="width: 100%; height: 100px"
     />
   </q-page>
 </template>
@@ -38,5 +46,9 @@ const onCreateTransaction = () => {
     official_receipt: null,
   })
   router.push('/accounting/transaction')
+}
+
+const onReportCash = () => {
+  router.push('/accounting/cash')
 }
 </script>
