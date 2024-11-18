@@ -55,13 +55,10 @@
             <q-item-label>Home</q-item-label>
           </q-item-section>
         </q-item>
-        <q-expansion-item
-          v-if="auth.current.role_id === 1"
-          icon="mdi-file-cabinet"
-          label="Accounting"
-        >
+        <q-expansion-item icon="mdi-file-cabinet" label="Accounting">
           <q-list class="q-pl-lg">
             <q-item
+              v-if="auth.current.role_id === 1"
               to="/accounting/account"
               active-class="q-item-no-link-highlighting"
             >
@@ -73,6 +70,7 @@
               </q-item-section>
             </q-item>
             <q-item
+              v-if="auth.current.role_id === 1"
               to="/accounting/transaction"
               active-class="q-item-no-link-highlighting"
             >
