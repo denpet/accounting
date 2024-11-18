@@ -9,7 +9,6 @@
       style="width: 100%; height: 100px; margin-bottom: 50px"
     />
     <q-btn
-      v-if="auth.current.role_id === 1"
       label="Report Cash"
       @click="onReportCash"
       icon="mdi-cash-multiple"
