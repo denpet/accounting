@@ -10,11 +10,7 @@
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date
-              v-close-popup
-              v-model="reportStore.resultFilter.from"
-              mask="YYYY-MM-DD"
-            >
+            <q-date v-model="reportStore.resultFilter.from" mask="YYYY-MM-DD">
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Close" color="primary" flat />
               </div>
@@ -33,11 +29,7 @@
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-            <q-date
-              v-close-popup
-              v-model="reportStore.resultFilter.to"
-              mask="YYYY-MM-DD"
-            >
+            <q-date v-model="reportStore.resultFilter.to" mask="YYYY-MM-DD">
               <div class="row items-center justify-end">
                 <q-btn v-close-popup label="Close" color="primary" flat />
               </div>
