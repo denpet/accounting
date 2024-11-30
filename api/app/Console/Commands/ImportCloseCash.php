@@ -109,6 +109,11 @@ class ImportCloseCash extends Command
                         $transaction['to_account_id'] = 1; // Cash
                         break;
 
+                    case 'cheque':
+                        $transaction['note'] = "Emergency, ";
+                        $transaction['to_account_id'] = 62; // Cash
+                        break;
+
                     default:
                         $skip = true;
                 }
@@ -120,6 +125,10 @@ class ImportCloseCash extends Command
                         $transaction['from_account_id'] = $transaction['to_account_id'];
                         $transaction['to_account_id'] = $temp;
                         $transaction['amount'] = -$transaction['amount'];
+                    }
+                    if ($transaction['to_account_id'] === 62) {
+                        $transaction['from_account_id'] = 3;
+                        $transaction['note'] = 'Put up to emergency box';
                     }
                     Transaction::create($transaction); //$transaction->save();
                     echo "Saved transaction\n";
