@@ -44,11 +44,23 @@
         </q-icon>
       </template>
     </q-input>
+    <q-select
+      v-model="reportStore.transactionsFilter.account"
+      label="Account"
+      :options="accountStore.options"
+      map-options
+      emit-value
+      style="width: 100%; max-width: 40vh"
+      clearable
+    />
   </q-form>
 </template>
 
 <script setup lang="ts">
 import { useAccountingReportStore } from 'stores/accounting/report'
+import { useAccountingAccountStore } from 'stores/accounting/account'
 
 const reportStore = useAccountingReportStore()
+const accountStore = useAccountingAccountStore()
+accountStore.fetchOptions()
 </script>

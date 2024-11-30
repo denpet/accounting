@@ -250,13 +250,29 @@ class ReportController extends Controller
     {
         $params = [
             'from' => Request::input('from', Date('Y-01-01')),
-            'to' => Request::input('to', Date('Y-12-31'))
+            'to' => Request::input('to', Date('Y-12-31')),
         ];
-
+        $account = Request::input('account', false);
+        $accountWhere = '';
+        if ($account) {
+            $accountWhere = "AND :account IN (from_account_id, to_account_id)";
+            $params['account'] = $account;
+        }
         return DB::select(
-            "SELECT id, date, note, from_account_id, to_account_id, amount, official_receipt
-            FROM eden.transactions
+            "SELECT t.id,
+	            date,
+	            note,
+	            from_account_id,
+	            from_account.name AS from_account_name,
+	            to_account_id,
+	            to_account.name AS to_account_name,
+	            amount,
+	            official_receipt
+            FROM eden.transactions t
+            JOIN eden.accounts from_account ON t.from_account_id = from_account.id
+            JOIN eden.accounts to_account ON t.to_account_id = to_account.id
             WHERE date BETWEEN :from AND :to
+            $accountWhere
             ORDER BY date, id",
             $params
         );

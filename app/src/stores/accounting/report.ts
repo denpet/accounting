@@ -20,6 +20,7 @@ type LedgerFilter = {
 type TransactionsFilter = {
   from?: string
   to?: string
+  account?: string
 }
 
 export const useAccountingReportStore = defineStore('accounting/report', () => {
@@ -107,9 +108,7 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
 
   const fetchTransactions = async () => {
     const urlParams = new URLSearchParams(
-      Object.entries(transactionsFilter.value).filter(
-        (el) => el[1] !== undefined,
-      ),
+      Object.entries(transactionsFilter.value).filter((el) => el[1] !== null),
     )
     return api
       .get(`accounting/report/transactions?${urlParams}`)
