@@ -3,7 +3,7 @@
     <q-input
       label="From"
       filled
-      v-model="reportStore.ledgerFilter.from"
+      v-model="reportStore.resultFilter.from"
       mask="####-##-##"
       class="col-5"
     >
@@ -12,7 +12,7 @@
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-date
               v-close-popup
-              v-model="reportStore.ledgerFilter.from"
+              v-model="reportStore.resultFilter.from"
               mask="YYYY-MM-DD"
             >
               <div class="row items-center justify-end">
@@ -26,7 +26,7 @@
     <q-input
       label="To"
       filled
-      v-model="reportStore.ledgerFilter.to"
+      v-model="reportStore.resultFilter.to"
       mask="####-##-##"
       class="col-5 q-ml-md"
     >
@@ -35,7 +35,7 @@
           <q-popup-proxy cover transition-show="scale" transition-hide="scale">
             <q-date
               v-close-popup
-              v-model="reportStore.ledgerFilter.to"
+              v-model="reportStore.resultFilter.to"
               mask="YYYY-MM-DD"
             >
               <div class="row items-center justify-end">
