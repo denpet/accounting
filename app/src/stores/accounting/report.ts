@@ -23,6 +23,13 @@ type TransactionsFilter = {
   account?: string
 }
 
+type AccountTransactionsFilter = {
+  from?: string
+  to?: string
+  account?: string
+  details?: string
+}
+
 export const useAccountingReportStore = defineStore('accounting/report', () => {
   const today = new Date()
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
@@ -47,6 +54,13 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
   const transactionsFilter: Ref<TransactionsFilter> = ref({
     from: firstDayOfMonth.toLocaleDateString('sv'),
     to: today.toLocaleDateString('sv'),
+  })
+
+  const accountTransactions = ref()
+  const accountTransactionsFilter: Ref<AccountTransactionsFilter> = ref({
+    from: firstDayOfMonth.toLocaleDateString('sv'),
+    to: today.toLocaleDateString('sv'),
+    details: 'yes',
   })
 
   const fetchBalance = async () => {
@@ -125,6 +139,27 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
       })
   }
 
+  const fetchAccountTransactions = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(accountTransactionsFilter.value).filter(
+        (el) => el[1] !== null,
+      ),
+    )
+    return api
+      .get(`accounting/report/account-transactions?${urlParams}`)
+      .then((response) => {
+        accountTransactions.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
+        })
+      })
+  }
+
   return {
     balanceFilter,
     balance,
@@ -138,5 +173,8 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
     transactionsFilter,
     transactions,
     fetchTransactions,
+    accountTransactionsFilter,
+    accountTransactions,
+    fetchAccountTransactions,
   }
 })

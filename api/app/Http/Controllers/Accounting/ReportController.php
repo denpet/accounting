@@ -277,4 +277,68 @@ class ReportController extends Controller
             $params
         );
     }
+
+    public function accountTransactions()
+    {
+        $params = [
+            'from' => Request::input('from', Date('Y-01-01')),
+            'to' => Request::input('to', Date('Y-12-31')),
+            'account' => Request::input('account', false)
+        ];
+
+        $balance = DB::selectOne(
+            "SELECT SUM(amount) AS opening_balance
+            FROM eden.transactions t
+            JOIN eden.accounts from_account ON t.from_account_id = from_account.id
+            JOIN eden.accounts to_account ON t.from_account_id = to_account.id
+            WHERE date < :from AND :account IN (from_account_id, to_account_id)",
+            ['from' => $params['from'], 'account' => $params['account']]
+        )->opening_balance;
+
+
+        $transactions = DB::select(
+            "SELECT t.id,
+                date,
+                from_account_id,
+                from_account.name AS from_account_name,
+                to_account_id,
+                to_account.name AS to_account_name,
+                note,
+                amount,
+                0 AS balance
+            FROM eden.transactions t
+            JOIN eden.accounts from_account ON t.from_account_id = from_account.id
+            JOIN eden.accounts to_account ON t.to_account_id = to_account.id
+            WHERE date BETWEEN :from AND :to AND :account IN (from_account_id, to_account_id)
+            ORDER BY date, t.id",
+            $params
+        );
+
+        $result = [];
+        $date = null;
+        foreach ($transactions as $transaction) {
+            if ($transaction->date != $date) {
+                $date = $transaction->date;
+                $result[$date] = [
+                    'date' => $date,
+                    'amount' => 0,
+                    'balance' => 0,
+                    'transactions' => []
+                ];
+            }
+
+            if ($transaction->to_account_id == $params['account']) {
+                $balance += $transaction->amount;
+                $result[$date]['amount'] += $transaction->amount;
+            }
+            if ($transaction->from_account_id == $params['account']) {
+                $balance -= $transaction->amount;
+                $result[$date]['amount'] -= $transaction->amount;
+            }
+            $result[$date]['balance'] = $balance;
+            $transaction->balance = $balance;
+            $result[$date]['transactions'][] = $transaction;
+        }
+        return array_values($result);
+    }
 }

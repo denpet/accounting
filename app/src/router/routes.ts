@@ -69,6 +69,11 @@ const routes: RouteRecordRaw[] = [
                 component: () =>
                   import('pages/Accounting/Report/TransactionPage.vue'),
               },
+              {
+                path: 'account-transactions',
+                component: () =>
+                  import('pages/Accounting/Report/AccountTransactionPage.vue'),
+              },
             ],
           },
         ],

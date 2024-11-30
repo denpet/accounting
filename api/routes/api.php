@@ -44,6 +44,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('report/result', [ReportController::class, 'result']);
         Route::get('report/ledger', [ReportController::class, 'ledger']);
         Route::get('report/transactions', [ReportController::class, 'transactions']);
+        Route::get('report/account-transactions', [ReportController::class, 'accountTransactions']);
     });
 
     Route::group(['prefix' => 'global'], function () {
