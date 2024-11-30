@@ -287,12 +287,12 @@ class ReportController extends Controller
         ];
 
         $balance = DB::selectOne(
-            "SELECT SUM(amount) AS opening_balance
+            "SELECT SUM(IF(from_account.id=:account2,-amount,amount)) AS opening_balance
             FROM eden.transactions t
             JOIN eden.accounts from_account ON t.from_account_id = from_account.id
             JOIN eden.accounts to_account ON t.from_account_id = to_account.id
             WHERE date < :from AND :account IN (from_account_id, to_account_id)",
-            ['from' => $params['from'], 'account' => $params['account']]
+            ['from' => $params['from'], 'account' => $params['account'], 'account2' => $params['account']]
         )->opening_balance;
 
 
