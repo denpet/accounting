@@ -1,10 +1,11 @@
 <template>
   <q-table
+    ref="table"
     class="ellipsis"
     :columns="columns"
     :rows="transactionStore.index ?? []"
     row-key="id"
-    :rows-per-page-options="[0]"
+    :rows-per-page-options="[10, 0]"
     dense
     @row-click="onShow"
   >
@@ -31,11 +32,18 @@ import {
   useAccountingTransactionStore,
   TransactionObject,
 } from 'stores/accounting/transaction'
-import { QTableColumn } from 'quasar'
+import { QTable, QTableColumn } from 'quasar'
+import { onMounted, Ref, ref } from 'vue'
 
 const transactionStore = useAccountingTransactionStore()
 transactionStore.filter.date = '2024%'
 transactionStore.fetchIndex()
+const table: Ref<QTable | null> = ref(null)
+
+onMounted(() => {
+  if (table.value) table.value.sort('date')
+  else console.log(table.value)
+})
 
 const onCreate = () => {
   transactionStore.create(<TransactionObject>{
@@ -70,6 +78,7 @@ const columns: QTableColumn[] = [
     field: 'date',
     align: 'left',
     sortable: true,
+    sortOrder: 'da',
   },
   {
     name: 'note',
