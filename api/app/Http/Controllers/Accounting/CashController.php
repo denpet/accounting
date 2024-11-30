@@ -12,7 +12,8 @@ class CashController extends RestController
         'date' => 'required|date',
         'amount' => 'required|numeric',
         'safe' => 'required|numeric',
+        'emergency' => 'required|numeric',
     ];
-    protected static $indexColumns = ['id', 'date', 'amount', 'safe'];
+    protected static $indexColumns = ['id', 'date', 'amount', 'safe', 'emergency'];
     protected static $orderBy = ['datetime'];
 }

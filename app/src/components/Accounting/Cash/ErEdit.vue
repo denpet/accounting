@@ -181,6 +181,16 @@
           Number(val) === val || 'Field is required and must be a number',
       ]"
     />
+    <q-input
+      class="q-pr-xs"
+      label="Emergency"
+      dense
+      v-model.number="cashStore.current.emergency"
+      :rules="[
+        (val) =>
+          Number(val) === val || 'Field is required and must be a number',
+      ]"
+    />
     <q-toolbar>
       <q-btn label="Submit" type="submit" color="positive" />
       <q-space />
@@ -219,6 +229,7 @@ onMounted(() => {
     date: new Date().toLocaleDateString('sv'),
     amount: null,
     safe: null,
+    emergency: null,
   })
 })
 

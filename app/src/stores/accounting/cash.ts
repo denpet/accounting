@@ -9,6 +9,7 @@ export type CashObject = {
   date: string
   amount: number | null
   safe: number | null
+  emergency: number | null
 }
 
 export type CashErrors = {
