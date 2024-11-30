@@ -244,4 +244,21 @@ class ReportController extends Controller
             throw $e;
         }
     }
+
+
+    public function transactions()
+    {
+        $params = [
+            'from' => Request::input('from', Date('Y-01-01')),
+            'to' => Request::input('to', Date('Y-12-31'))
+        ];
+
+        return DB::select(
+            "SELECT id, date, note, from_account_id, to_account_id, amount, official_receipt
+            FROM eden.transactions
+            WHERE date BETWEEN :from AND :to
+            ORDER BY date, id",
+            $params
+        );
+    }
 }

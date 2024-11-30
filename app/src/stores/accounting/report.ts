@@ -17,21 +17,35 @@ type LedgerFilter = {
   to?: string
 }
 
+type TransactionsFilter = {
+  from?: string
+  to?: string
+}
+
 export const useAccountingReportStore = defineStore('accounting/report', () => {
+  const today = new Date()
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+
   const balance = ref()
   const balanceFilter: Ref<BalanaceFilter> = ref({
-    date: new Date().toLocaleDateString('sv'),
+    date: today.toLocaleDateString('sv'),
   })
   const result = ref()
   const resultFilter: Ref<ResultFilter> = ref({
-    from: '2024-10-01',
-    to: new Date().toLocaleDateString('sv'),
+    from: firstDayOfMonth.toLocaleDateString('sv'),
+    to: today.toLocaleDateString('sv'),
   })
 
   const ledger = ref()
   const ledgerFilter: Ref<LedgerFilter> = ref({
-    from: '2024-10-01',
-    to: new Date().toLocaleDateString('sv'),
+    from: firstDayOfMonth.toLocaleDateString('sv'),
+    to: today.toLocaleDateString('sv'),
+  })
+
+  const transactions = ref()
+  const transactionsFilter: Ref<TransactionsFilter> = ref({
+    from: firstDayOfMonth.toLocaleDateString('sv'),
+    to: today.toLocaleDateString('sv'),
   })
 
   const fetchBalance = async () => {
@@ -91,6 +105,27 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
       })
   }
 
+  const fetchTransactions = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(transactionsFilter.value).filter(
+        (el) => el[1] !== undefined,
+      ),
+    )
+    return api
+      .get(`accounting/report/transactions?${urlParams}`)
+      .then((response) => {
+        transactions.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
+        })
+      })
+  }
+
   return {
     balanceFilter,
     balance,
@@ -101,5 +136,8 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
     ledgerFilter,
     ledger,
     fetchLedger,
+    transactionsFilter,
+    transactions,
+    fetchTransactions,
   }
 })
