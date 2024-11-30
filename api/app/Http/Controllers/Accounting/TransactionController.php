@@ -43,12 +43,14 @@ class TransactionController extends RestController
 
         /* Create offset for number series */
         $offset = date('Y', strtotime($transaction['date']));
-        if ($fromAccount->type == 'I' && $transaction['official_receipt'] != NULL) {
+        if ($transaction['from_account_id'] === 62 || $transaction['to_account_id'] === 62) {
+            $offset .= 9;
+        } elseif ($fromAccount->type == 'I') {
             $offset .= 1;
         } elseif ($toAccount->type == 'C') {
             $offset .= 0;
         } else {
-            $offset .= 9;
+            $offset .= 8;
         }
         $id = DB::selectOne(
             "SELECT MAX(id) AS id

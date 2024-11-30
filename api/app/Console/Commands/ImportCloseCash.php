@@ -55,24 +55,9 @@ class ImportCloseCash extends Command
             );
 
             foreach ($closedCashRows as $closedCashRow) {
-                $transaction = []; //Transaction::create();
+                $transaction = [];
                 $transaction['date'] = substr($closedCashRow->dateend, 0, 10);
 
-                /* Create offset for number series */
-                $offset = date('Y1', strtotime($transaction['date']));
-                $id = DB::selectOne(
-                    "SELECT MAX(id) AS id
-                    FROM eden.transactions
-                    where id BETWEEN {$offset}00000 AND {$offset}99999"
-                )->id;
-                if (!isset($id)) {
-                    $id = $offset . '00001';
-                } else {
-                    $id++;
-                }
-                $transaction['id'] = $id;
-                $transaction['from_account_id'] = 34;
-                $skip = false;
                 switch ($closedCashRow->payment) {
                     case 'bank':
                         $transaction['note'] = "Deposit, ";
@@ -110,29 +95,47 @@ class ImportCloseCash extends Command
                         break;
 
                     case 'cheque':
-                        $transaction['note'] = "Emergency, ";
-                        $transaction['to_account_id'] = 62; // Cash
+                        $transaction['note'] = null;
+                        $transaction['to_account_id'] = 62; // Emergency
                         break;
 
                     default:
-                        $skip = true;
+                        continue 2;
                 }
-                if (! $skip) {
+
+                if ($transaction['to_account_id'] === 62) {
+                    $transaction['from_account_id'] = 3;
+                    $transaction['note'] = 'Put up to emergency box';
+                    $offset = date('Y9', strtotime($transaction['date']));
+                } else {
+                    $transaction['from_account_id'] = 34;
                     $transaction['note'] .= "$closedCashRow->host, $closedCashRow->hostsequence";
-                    $transaction['amount'] = round($closedCashRow->total, 2);
-                    if ($transaction['amount'] < 0) {
-                        $temp = $transaction['from_account_id'];
-                        $transaction['from_account_id'] = $transaction['to_account_id'];
-                        $transaction['to_account_id'] = $temp;
-                        $transaction['amount'] = -$transaction['amount'];
-                    }
-                    if ($transaction['to_account_id'] === 62) {
-                        $transaction['from_account_id'] = 3;
-                        $transaction['note'] = 'Put up to emergency box';
-                    }
-                    Transaction::create($transaction); //$transaction->save();
-                    echo "Saved transaction\n";
+                    $offset = date('Y1', strtotime($transaction['date']));
                 }
+
+                /* Create offset for number series */
+                $id = DB::selectOne(
+                    "SELECT MAX(id) AS id
+                    FROM eden.transactions
+                    where id BETWEEN {$offset}00000 AND {$offset}99999"
+                )->id;
+                if (!isset($id)) {
+                    $id = $offset . '00001';
+                } else {
+                    $id++;
+                }
+
+                $transaction['id'] = $id;
+                $transaction['amount'] = round($closedCashRow->total, 2);
+                if ($transaction['amount'] < 0) {
+                    $temp = $transaction['from_account_id'];
+                    $transaction['from_account_id'] = $transaction['to_account_id'];
+                    $transaction['to_account_id'] = $temp;
+                    $transaction['amount'] = -$transaction['amount'];
+                }
+
+                Transaction::create($transaction);
+                echo "Saved transaction\n";
 
                 $importedClosedCash = ImportedClosedCash::find($closedCashRow->money);
                 if ($importedClosedCash == null) {
