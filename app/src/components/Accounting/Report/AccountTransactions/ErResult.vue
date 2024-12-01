@@ -8,7 +8,7 @@
     <template #body="body">
       <template v-if="reportStore.accountTransactionsFilter.details === 'yes'">
         <q-tr>
-          <q-td colspan="7" style="border-top: solid 2px; font-weight: bold">
+          <q-td colspan="8" style="border-top: solid 2px; font-weight: bold">
             {{ body.row.date }}
           </q-td>
         </q-tr>
@@ -106,6 +106,13 @@ const columns: QTableColumn[] = [
     field: 'balance',
     align: 'right',
     format: (val) => format.number(val, 0, true),
+  },
+  {
+    name: 'reconcile',
+    label: 'Reported',
+    field: 'reconcile',
+    align: 'right',
+    format: (val) => format.number(val, 0, false),
   },
 ]
 </script>

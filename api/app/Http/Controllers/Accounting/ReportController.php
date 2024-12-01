@@ -298,19 +298,22 @@ class ReportController extends Controller
 
         $transactions = DB::select(
             "SELECT t.id,
-                date,
+                t.date,
                 from_account_id,
                 from_account.name AS from_account_name,
                 to_account_id,
                 to_account.name AS to_account_name,
                 note,
-                amount,
-                0 AS balance
+                t.amount,
+                0 AS balance,
+                c.amount + c.safe AS in_cash,
+                c.emergency AS in_emergency
             FROM eden.transactions t
             JOIN eden.accounts from_account ON t.from_account_id = from_account.id
             JOIN eden.accounts to_account ON t.to_account_id = to_account.id
-            WHERE date BETWEEN :from AND :to AND :account IN (from_account_id, to_account_id)
-            ORDER BY date, t.id",
+            LEFT JOIN eden.cash c ON t.date = c.date
+            WHERE t.date BETWEEN :from AND :to AND :account IN (from_account_id, to_account_id)
+            ORDER BY t.date, t.id",
             $params
         );
 
@@ -323,6 +326,15 @@ class ReportController extends Controller
                     'date' => $date,
                     'amount' => 0,
                     'balance' => 0,
+                    'reconcile' => (
+                        $params['account'] == 62
+                        ? (float) $transaction->in_emergency
+                        : (
+                            $params['account'] == 1
+                            ? (float) $transaction->in_cash
+                            : null
+                        )
+                    ),
                     'transactions' => []
                 ];
             }
