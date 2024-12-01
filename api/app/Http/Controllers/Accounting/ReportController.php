@@ -296,7 +296,7 @@ class ReportController extends Controller
 
 
         $transactions = DB::select(
-            "SELECT t.id,
+            "SELECT DISTINCT t.id,
                 t.date,
                 from_account_id,
                 from_account.name AS from_account_name,
