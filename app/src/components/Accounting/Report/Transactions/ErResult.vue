@@ -3,6 +3,7 @@
     :rows="reportStore.transactions"
     :columns="columns"
     :rows-per-page-options="[0]"
+    dense
   />
 </template>
 

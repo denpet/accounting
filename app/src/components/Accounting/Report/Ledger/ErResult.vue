@@ -3,6 +3,7 @@
     :rows="reportStore.ledger"
     :columns="columns"
     :rows-per-page-options="[0, 10]"
+    dense
   >
     <template #header="header">
       <q-tr :props="header">

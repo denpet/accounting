@@ -5,16 +5,11 @@
       :columns="columns"
       hide-bottom
       :rows-per-page-options="[0]"
+      dense
     >
       <template #bottom-row>
-        <q-td class="text-bold" style="border-top: 5px double white">
-          Total
-        </q-td>
-        <q-td
-          class="text-bold"
-          align="right"
-          style="border-top: 5px double white"
-        >
+        <q-td class="text-bold" style="border-top: solid 1px"> Total </q-td>
+        <q-td class="text-bold" align="right" style="border-top: solid 1px">
           {{ totalAssets }}
         </q-td>
       </template>
@@ -26,6 +21,7 @@
       :columns="columns"
       hide-bottom
       :rows-per-page-options="[0]"
+      dense
     />
     <q-table
       :rows="reportStore.balance.equity"
@@ -33,16 +29,11 @@
       hide-header
       hide-bottom
       :rows-per-page-options="[0]"
+      dense
     >
       <template #bottom-row>
-        <q-td class="text-bold" style="border-top: 5px double white">
-          Total
-        </q-td>
-        <q-td
-          class="text-bold"
-          align="right"
-          style="border-top: 5px double white"
-        >
+        <q-td class="text-bold" style="border-top: solid 1px"> Total </q-td>
+        <q-td class="text-bold" align="right" style="border-top: solid 1px">
           {{ totalLiabilities }}
         </q-td>
       </template>
