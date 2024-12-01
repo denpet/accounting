@@ -48,8 +48,7 @@ class ReportController extends Controller
             FROM eden.transactions t
             JOIN eden.accounts from_account ON t.from_account_id=from_account.id
             JOIN eden.accounts to_account ON t.to_account_id=to_account.id
-            WHERE date <= :date
-                AND date>='2024-10-01'",
+            WHERE date <= :date",
             ['date' => $date]
         );
         foreach ($transactions as $transaction) {
