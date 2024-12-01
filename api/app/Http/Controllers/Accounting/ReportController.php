@@ -304,13 +304,10 @@ class ReportController extends Controller
                 to_account.name AS to_account_name,
                 note,
                 t.amount,
-                0 AS balance,
-                c.amount + c.safe AS in_cash,
-                c.emergency AS in_emergency
+                0 AS balance
             FROM eden.transactions t
             JOIN eden.accounts from_account ON t.from_account_id = from_account.id
             JOIN eden.accounts to_account ON t.to_account_id = to_account.id
-            LEFT JOIN eden.cash c ON t.date = c.date
             WHERE t.date BETWEEN :from AND :to AND :account IN (from_account_id, to_account_id)
             ORDER BY t.date, t.id",
             $params
@@ -321,16 +318,28 @@ class ReportController extends Controller
         foreach ($transactions as $transaction) {
             if ($transaction->date != $date) {
                 $date = $transaction->date;
+                $cash = DB::selectOne(
+                    "SELECT amount + safe AS cash,
+                        emergency AS emergency
+                    FROM eden.cash
+                    WHERE date=:date
+                    ORDER BY datetime DESC
+                    LIMIT 1",
+                    ['date' => $date]
+                );
+                if (!$cash) {
+                    $cash = (object) ['cash' => null, 'emergency' => null];
+                }
                 $result[$date] = [
                     'date' => $date,
                     'amount' => 0,
                     'balance' => 0,
                     'reconcile' => (
                         $params['account'] == 62
-                        ? (float) $transaction->in_emergency
+                        ? (float) $cash->emergency
                         : (
                             $params['account'] == 1
-                            ? (float) $transaction->in_cash
+                            ? (float) $cash->cash
                             : null
                         )
                     ),
