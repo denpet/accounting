@@ -66,12 +66,12 @@ class ImportCloseCash extends Command
 
                     case 'ccard':
                         $transaction['note'] = "Credit card sales, ";
-                        $transaction['to_account_id'] = 16; // Credit card
+                        $transaction['to_account_id'] = 61; // Tab!
                         break;
 
                     case 'ccardrefund':
                         $transaction['note'] = "Credit card refund, ";
-                        $transaction['to_account_id'] = 16; // Credit card
+                        $transaction['to_account_id'] = 61; // Tab!
                         break;
 
                     case 'cashout':
