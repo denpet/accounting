@@ -23,6 +23,7 @@
           <q-td align="left">{{ transaction.to_account_name }}</q-td>
           <q-td align="right">{{ format.number(transaction.amount) }}</q-td>
           <q-td align="right">{{ format.number(transaction.balance) }}</q-td>
+          <q-td />
         </q-tr>
         <q-tr>
           <q-td
