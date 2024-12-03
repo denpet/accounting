@@ -135,17 +135,9 @@ class ImportCloseCash extends Command
                 }
 
                 Transaction::create($transaction);
+                ImportedClosedCash::create(['id' => $closedCashRow->money]);
                 echo "Saved transaction\n";
-
-                $importedClosedCash = ImportedClosedCash::find($closedCashRow->money);
-                if ($importedClosedCash == null) {
-                    $importedClosedCash = ImportedClosedCash::create();
-                    $importedClosedCash['id'] = $closedCashRow->money;
-                    $importedClosedCash->save();
-                }
             }
-
-            // $this->sendStatement ();
         } catch (Throwable $e) {
             echo sprintf("Error: " . $e->getMessage());
             var_dump($closedCashRow);
