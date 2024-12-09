@@ -75,12 +75,6 @@
         :error-message="transactionStore.errors?.vat?.toString()"
       />
     </div>
-    <q-input
-      label="TIN"
-      v-model="transactionStore.current.tin"
-      :error="transactionStore.errors?.tin !== undefined"
-      :error-message="transactionStore.errors?.tin?.toString()"
-    />
     <q-item v-if="transactionStore.current.supplier_id !== null">
       <q-item-section side>
         {{ format.tin(transactionStore.current.supplier.tin) }}
