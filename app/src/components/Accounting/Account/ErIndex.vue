@@ -4,7 +4,7 @@
     :columns="columns"
     :rows="accountStore.index ?? []"
     row-key="id"
-    :rows-per-page-options="[0]"
+    :rows-per-page-options="[25, 50, 0]"
     dense
     @row-click="onShow"
   >

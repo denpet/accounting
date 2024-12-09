@@ -5,7 +5,7 @@
     :columns="columns"
     :rows="supplierStore.index ?? []"
     row-key="id"
-    :rows-per-page-options="[10, 0]"
+    :rows-per-page-options="[25, 50, 0]"
     dense
     @row-click="onShow"
   >
@@ -33,16 +33,14 @@ import {
   SupplierObject,
 } from 'stores/accounting/supplier'
 import { QTable, QTableColumn } from 'quasar'
-import { onMounted, Ref, ref } from 'vue'
+import { onMounted } from 'vue'
 import { format } from 'boot/format'
 
 const supplierStore = useAccountingSupplierStore()
-supplierStore.fetchIndex()
-const table: Ref<QTable | null> = ref(null)
 
 onMounted(() => {
-  if (table.value) table.value.sort('date')
-  else console.log(table.value)
+  supplierStore.filter = { word: '' }
+  supplierStore.fetchIndex()
 })
 
 const onCreate = () => {

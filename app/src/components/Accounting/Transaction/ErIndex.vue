@@ -6,7 +6,7 @@
     :visible-columns="['id', 'date', 'note', 'amount']"
     :rows="transactionStore.index ?? []"
     row-key="id"
-    :rows-per-page-options="[10, 15, 25, 50, 0]"
+    :rows-per-page-options="[25, 50, 0]"
     dense
     @row-click="onShow"
   >
@@ -23,6 +23,15 @@
         align="left"
         style="width: 6rem"
         class="q-ml-md"
+      />
+      <q-input
+        v-model="transactionStore.filter.note"
+        class="q-ml-md"
+        label="Search"
+        :error="transactionStore.errors?.supplier_id !== undefined"
+        :error-message="transactionStore.errors?.supplier_id?.toString()"
+        @update:model-value="transactionStore.fetchIndex()"
+        debounce="500"
       />
     </template>
   </q-table>
@@ -54,7 +63,7 @@ const onCreate = () => {
     note: '',
     amount: null,
     vat: null,
-    tin: null,
+    supplier_id: null,
     official_receipt: null,
   })
 }

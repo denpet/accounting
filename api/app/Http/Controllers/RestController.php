@@ -46,7 +46,7 @@ class RestController extends Controller
             } elseif (is_numeric($clause)) {
                 $query->where($key, '=', $clause);
             } else {
-                $query->where($key, 'like', "$clause%");
+                $query->where($key, 'like', "%$clause%");
             }
         }
     }

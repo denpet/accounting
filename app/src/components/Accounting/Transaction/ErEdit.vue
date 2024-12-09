@@ -192,6 +192,8 @@ const onCreate = () => {
 const accountStore = useAccountingAccountStore()
 onMounted(() => {
   accountStore.fetchOptions()
+  supplierStore.index = null
+  supplierStore.filter = { word: '' }
 })
 
 const fromAccountOptions = computed(() => {
