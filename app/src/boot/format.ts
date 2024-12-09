@@ -8,6 +8,17 @@ const format = {
       maximumFractionDigits: decimals,
     }).format(value)
   },
+  tin: (value: string | null) => {
+    if (value === null) return ''
+    let result = ''
+    for (const char of value) {
+      if (result.length == 3 || result.length == 7 || result.length == 11) {
+        result += '-'
+      }
+      result += char
+    }
+    return result
+  },
 }
 
 export default boot(({ app }) => {

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Accounting\AccountController;
 use App\Http\Controllers\Accounting\CashController;
 use App\Http\Controllers\Accounting\ReportController;
+use App\Http\Controllers\Accounting\SupplierController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
 use App\Http\Controllers\Payroll\EmployeeController;
@@ -33,6 +34,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'accounting'], function () {
         Route::get('accounts/options', [AccountController::class, 'options']);
         Route::apiResource('accounts', AccountController::class);
+
+        Route::apiResource('suppliers', SupplierController::class);
 
         Route::post('transactions/upload', [TransactionController::class, 'uploadImage']);
         Route::get('transactions/image/{id}', [TransactionController::class, 'showImage']);

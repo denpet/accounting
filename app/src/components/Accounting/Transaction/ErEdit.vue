@@ -81,6 +81,54 @@
       :error="transactionStore.errors?.tin !== undefined"
       :error-message="transactionStore.errors?.tin?.toString()"
     />
+    <q-item v-if="transactionStore.current.supplier_id !== null">
+      <q-item-section side>
+        {{ format.tin(transactionStore.current.supplier.tin) }}
+      </q-item-section>
+      <q-item-section>
+        {{ transactionStore.current.supplier.name }}
+      </q-item-section>
+      <q-btn
+        icon="mdi-close"
+        flat
+        @click="transactionStore.current.supplier_id = null"
+      />
+    </q-item>
+    <ErSupplierEdit v-else-if="supplierStore.current" />
+    <template v-else>
+      <q-input
+        v-model="supplierStore.filter.word"
+        class="col-2"
+        label="Supplier"
+        :error="transactionStore.errors?.supplier_id !== undefined"
+        :error-message="transactionStore.errors?.supplier_id?.toString()"
+        @update:model-value="onSupplierFilter"
+        debounce="500"
+      />
+      <q-btn
+        @click.stop="onCreateSupplier"
+        icon="mdi-plus"
+        label="Supplier"
+        color="secondary"
+        size="sm"
+        rounded
+        dense
+        align="left"
+        style="width: 6rem"
+        class="q-ml-md"
+      />
+      <q-table
+        ref="table"
+        class="ellipsis"
+        :columns="columns"
+        :rows="supplierStore.index ?? []"
+        row-key="id"
+        :rows-per-page-options="[0]"
+        dense
+        @row-click="onSetSupplierId"
+        hide-bottom
+      />
+    </template>
     <q-input
       label="o.r."
       v-model="transactionStore.current.official_receipt"
@@ -120,13 +168,17 @@ import {
   useAccountingTransactionStore,
   TransactionObject,
 } from 'stores/accounting/transaction'
+import { useAccountingSupplierStore } from 'stores/accounting/supplier'
 import { useAccountingAccountStore } from 'stores/accounting/account'
 import { computed, onMounted } from 'vue'
-import { Cookies } from 'quasar'
+import { Cookies, QTableColumn } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
+import { format } from 'boot/format'
+import ErSupplierEdit from 'components/Accounting/Supplier/ErEdit.vue'
 
 const uploadApi = process.env.API + '/api/accounting/transactions'
 const transactionStore = useAccountingTransactionStore()
+const supplierStore = useAccountingSupplierStore()
 const auth = useAuthStore()
 
 const onCreate = () => {
@@ -185,6 +237,14 @@ const onSubmit = () => {
   }
 }
 
+const onSupplierFilter = () => {
+  if (supplierStore.filter.word && supplierStore.filter.word.length > 1) {
+    supplierStore.fetchIndex()
+  } else {
+    supplierStore.index = null
+  }
+}
+
 const uploadFile = () => {
   return new Promise((resolve) => {
     resolve({
@@ -210,4 +270,50 @@ const uploadFile = () => {
     })
   })
 }
+
+const onSetSupplierId = (
+  event: object,
+  row: { id: number; tin: string; name: string },
+) => {
+  if (transactionStore.current) {
+    transactionStore.current.supplier_id = row.id
+    transactionStore.current.supplier = row
+  }
+}
+
+const onCreateSupplier = () => {
+  supplierStore.create({
+    id: null,
+    tin: isNaN(parseInt(supplierStore.filter.word ?? ''))
+      ? null
+      : supplierStore.filter.word ?? null,
+    name: isNaN(parseInt(supplierStore.filter.word ?? ''))
+      ? supplierStore.filter.word ?? ''
+      : '',
+    address1: null,
+    address2: null,
+    postal_code: null,
+    city: null,
+    province: null,
+    phone_number: null,
+  })
+}
+
+const columns: QTableColumn[] = [
+  {
+    name: 'tin',
+    label: 'Tin',
+    field: 'tin',
+    align: 'left',
+    format: (val) => format.tin(val),
+    sortable: true,
+  },
+  {
+    name: 'name',
+    label: 'Name',
+    field: 'name',
+    align: 'left',
+    sortable: true,
+  },
+]
 </script>

@@ -3,9 +3,10 @@
     ref="table"
     class="ellipsis"
     :columns="columns"
+    :visible-columns="['id', 'date', 'note', 'amount']"
     :rows="transactionStore.index ?? []"
     row-key="id"
-    :rows-per-page-options="[10, 0]"
+    :rows-per-page-options="[10, 15, 25, 50, 0]"
     dense
     @row-click="onShow"
   >
@@ -41,8 +42,7 @@ transactionStore.fetchIndex()
 const table: Ref<QTable | null> = ref(null)
 
 onMounted(() => {
-  if (table.value) table.value.sort('date')
-  else console.log(table.value)
+  if (table.value) table.value.sort('updated_at')
 })
 
 const onCreate = () => {
@@ -78,7 +78,6 @@ const columns: QTableColumn[] = [
     field: 'date',
     align: 'left',
     sortable: true,
-    sortOrder: 'da',
   },
   {
     name: 'note',
@@ -93,6 +92,14 @@ const columns: QTableColumn[] = [
     field: 'amount',
     align: 'right',
     sortable: true,
+  },
+  {
+    name: 'updated_at',
+    label: 'Updated',
+    field: 'updated_at',
+    align: 'left',
+    sortable: true,
+    sortOrder: 'da',
   },
 ]
 </script>

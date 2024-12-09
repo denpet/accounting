@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\RestController;
 use App\Models\Accounting\Account;
+use App\Models\Accounting\Supplier;
 use App\Models\Accounting\Transaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Request;
 class TransactionController extends RestController
 {
     protected static $model = Transaction::class;
+    protected static $with = ['supplier:id,tin,name'];
     protected static $validations = [
         'date' => 'required|date',
         'from_account_id' => 'required|exists:.eden.accounts,id',
@@ -19,9 +21,11 @@ class TransactionController extends RestController
         'amount' => 'required|numeric',
         'vat' => 'required|numeric',
         'tin' => 'nullable|string',
-        'official_receipt' => 'nullable|string'
+        'official_receipt' => 'nullable|string',
+        'supplier_id' => 'nullable|exists:.eden.suppliers,id'
+
     ];
-    protected static $indexColumns = ['id', 'date', 'note', 'amount'];
+    protected static $indexColumns = ['id', 'date', 'note', 'amount', 'updated_at'];
     protected static $orderBy = ['date', 'id'];
 
     public function show($id)

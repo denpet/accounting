@@ -3,62 +3,50 @@ import { Ref, ref } from 'vue'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
 
-export type TransactionObject = {
+export type SupplierObject = {
   id: number | null
-  date: string
-  from_account_id: number
-  to_account_id: number
-  note: string
-  amount: number | null
-  vat: number | null
   tin: string | null
-  official_receipt: string | null
-  supplier_id: number | null
-  supplier: {
-    tin: string
-    name: string
-  }
-  images: Array<string> | null
+  name: string
+  address1: string | null
+  address2: string | null
+  postal_code: string | null
+  city: string | null
+  province: string | null
+  phone_number: string | null
 }
 
-export type TransactionErrors = {
-  message?: string
+export type SupplierErrors = {
   id?: string
-  date?: string
-  from_account_id?: string
-  to_account_id?: string
-  note?: string
-  amount?: string
-  vat?: string
   tin?: string
-  official_receipt?: string
-  supplier_id?: string
+  name?: string
+  address1?: string
+  address2?: string
+  postal_code?: string
+  city?: string
+  province?: string
+  phone_number?: string
 }
 
-type TransactionFilter = {
-  date?: string
-  from_account_id?: string
-  to_account_id?: string
-  note?: string
-  supplier_id?: string
+type SupplierFilter = {
+  word?: string
 }
 
-export const useAccountingTransactionStore = defineStore(
-  'accounting/transaction',
+export const useAccountingSupplierStore = defineStore(
+  'accounting/supplier',
   () => {
     const index = ref()
-    const current: Ref<TransactionObject | undefined> = ref()
-    const errors: Ref<TransactionErrors | undefined> = ref()
-    const filter: Ref<TransactionFilter> = ref({})
+    const current: Ref<SupplierObject | undefined> = ref()
+    const errors: Ref<SupplierErrors | undefined> = ref()
+    const filter: Ref<SupplierFilter> = ref({})
 
     const fetchIndex = async () => {
       const urlParams = new URLSearchParams(
         Object.entries(filter.value).filter((el) => el[1] !== undefined),
       )
       return api
-        .get(`accounting/transactions?${urlParams}`)
+        .get(`accounting/suppliers?${urlParams}`)
         .then((response) => {
-          index.value = response.data.data
+          index.value = response.data
         })
         .catch((error) => {
           Notify.create({
@@ -72,7 +60,7 @@ export const useAccountingTransactionStore = defineStore(
 
     const show = async (id: number) => {
       return api
-        .get(`accounting/transactions/${id}`)
+        .get(`accounting/suppliers/${id}`)
         .then((response) => {
           current.value = response.data
         })
@@ -86,21 +74,20 @@ export const useAccountingTransactionStore = defineStore(
         })
     }
 
-    const create = (prefill: TransactionObject = <TransactionObject>{}) => {
+    const create = (prefill: SupplierObject = <SupplierObject>{}) => {
       current.value = {
-        ...{ name: '' },
         ...prefill,
       }
     }
 
     const store = async () => {
-      const transaction = current.value
-      if (!transaction) throw new Error('No transaction')
+      const cash = current.value
+      if (!cash) throw new Error('No cash')
       errors.value = undefined
       return api
-        .post('accounting/transactions', transaction)
+        .post('accounting/suppliers', cash)
         .then((response) => {
-          transaction.id = response.data.id
+          cash.id = response.data.id
           fetchIndex()
           Notify.create({
             message: 'Stored',
@@ -118,7 +105,7 @@ export const useAccountingTransactionStore = defineStore(
     const update = async (id: number) => {
       errors.value = undefined
       return api
-        .put(`accounting/transactions/${id}`, current.value)
+        .put(`accounting/suppliers/${id}`, current.value)
         .then(() => {
           fetchIndex()
           Notify.create({
@@ -136,7 +123,7 @@ export const useAccountingTransactionStore = defineStore(
 
     const destroy = async (id: number) => {
       return api
-        .delete(`accounting/transactions/${id}`)
+        .delete(`accounting/suppliers/${id}`)
         .then(() => {
           if (index.value !== null) fetchIndex()
           Notify.create({

@@ -71,6 +71,18 @@
             </q-item>
             <q-item
               v-if="auth.current.role_id === 1"
+              to="/accounting/supplier"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-storefront-outline" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Supplier</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="auth.current.role_id === 1"
               to="/accounting/transaction"
               active-class="q-item-no-link-highlighting"
             >
