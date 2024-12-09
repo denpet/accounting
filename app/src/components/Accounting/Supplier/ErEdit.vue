@@ -17,7 +17,7 @@
       User Id <b>{{ supplierStore.current.id }}</b>
     </div>
     <q-input
-      label="TIN"
+      label="TIN (changing this effect all existing transactions)"
       v-model="supplierStore.current.tin"
       mask="###-###-###-#####"
       unmasked-value
