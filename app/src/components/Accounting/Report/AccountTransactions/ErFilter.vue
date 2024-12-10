@@ -53,7 +53,28 @@
       style="width: 100%; max-width: 40vh"
       clearable
       class="col-5"
-    />
+    >
+      <template #option="scope">
+        <q-item v-bind="scope.itemProps">
+          <q-item-section avatar>
+            <q-item-label>{{ scope.opt.type }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ scope.opt.name }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+      <template #selected-item="value">
+        <q-item>
+          <q-item-section>
+            <q-item-label>{{ value.opt.type }}</q-item-label>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ value.opt.name }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </template>
+    </q-select>
     <q-toggle
       v-model="reportStore.accountTransactionsFilter.details"
       label="Show details"
