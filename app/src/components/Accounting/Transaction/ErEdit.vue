@@ -41,7 +41,29 @@
         emit-value
         :error="transactionStore.errors?.from_account_id !== undefined"
         :error-message="transactionStore.errors?.from_account_id?.toString()"
-      />
+        dense
+      >
+        <template #option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section avatar>
+              <q-item-label>{{ scope.opt.type }}</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ scope.opt.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+        <template #selected-item="value">
+          <q-item>
+            <q-item-section>
+              <q-item-label>{{ value.opt.type }}</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ value.opt.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
       <q-select
         label="To"
         class="col-6"
@@ -51,7 +73,29 @@
         emit-value
         :error="transactionStore.errors?.to_account_id !== undefined"
         :error-message="transactionStore.errors?.to_account_id?.toString()"
-      />
+        dense
+      >
+        <template #option="scope">
+          <q-item v-bind="scope.itemProps">
+            <q-item-section avatar>
+              <q-item-label>{{ scope.opt.type }}</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ scope.opt.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+        <template #selected-item="value">
+          <q-item>
+            <q-item-section>
+              <q-item-label>{{ value.opt.type }}</q-item-label>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ value.opt.name }}</q-item-label>
+            </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
     </div>
     <q-input
       label="Description"
@@ -198,25 +242,41 @@ onMounted(() => {
 
 const fromAccountOptions = computed(() => {
   return auth.current.id == 1
-    ? accountStore.options.filter((value: { value: number }) => {
-        return [1, 3, 33, 35, 38, 39, 45, 60, 61, 62].includes(value.value)
-      })
+    ? accountStore.options
     : accountStore.options.filter((value: { value: number }) => {
-        return [1, 3, 62].includes(value.value)
+        return [
+          1,
+          3,
+          62,
+          transactionStore.current?.from_account_id ?? 0,
+        ].includes(value.value)
       })
 })
 
 const toAccountOptions = computed(() => {
   return auth.current.id == 1
-    ? accountStore.options.filter((value: { value: number }) => {
-        return [
-          1, 3, 5, 9, 10, 11, 12, 13, 14, 15, 19, 20, 22, 23, 28, 29, 38, 39,
-          44, 48, 49, 51, 53, 54, 60, 62,
-        ].includes(value.value)
-      })
+    ? accountStore.options
     : accountStore.options.filter((value: { value: number }) => {
         return [
-          9, 10, 11, 12, 13, 15, 19, 20, 22, 23, 28, 29, 44, 48, 49, 51, 53, 54,
+          9,
+          10,
+          11,
+          12,
+          13,
+          15,
+          19,
+          20,
+          22,
+          23,
+          28,
+          29,
+          44,
+          48,
+          49,
+          51,
+          53,
+          54,
+          transactionStore.current?.to_account_id ?? 0,
         ].includes(value.value)
       })
 })

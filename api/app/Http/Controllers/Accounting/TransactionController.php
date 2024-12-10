@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\RestController;
 use App\Models\Accounting\Account;
-use App\Models\Accounting\Supplier;
 use App\Models\Accounting\Transaction;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -19,7 +18,7 @@ class TransactionController extends RestController
         'to_account_id' => 'required|exists:.eden.accounts,id',
         'note' => 'required|string',
         'amount' => 'required|numeric',
-        'vat' => 'required|numeric',
+        'vat' => 'nullable|numeric',
         'tin' => 'nullable|string',
         'official_receipt' => 'nullable|string',
         'supplier_id' => 'nullable|exists:.eden.suppliers,id'

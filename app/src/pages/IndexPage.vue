@@ -2,7 +2,7 @@
   <q-page>
     <q-btn
       v-if="auth.current.role_id === 1"
-      label="Accounting"
+      label="Enter Transaction"
       @click="onCreateTransaction"
       icon="mdi-cash-register"
       color="grey"
@@ -41,8 +41,8 @@ const onCreateTransaction = () => {
     note: '',
     amount: null,
     vat: null,
-    tin: null,
     official_receipt: null,
+    supplier_id: null,
   })
   router.push('/accounting/transaction')
 }

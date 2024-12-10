@@ -15,4 +15,19 @@ class AccountController extends RestController
     protected static $indexColumns = ['id', 'name', 'type'];
     protected static $orderBy = ['type', 'name'];
     protected static $optionColumn = 'name';
+
+    public function options()
+    {
+        $query = static::$model::select([
+            "$this->primaryKey AS value",
+            "type",
+            "name",
+
+        ]);
+        $this->filter($query, request()->all());
+        foreach (static::$orderBy as $orderBy) {
+            $query->orderBy($orderBy);
+        }
+        return $query->get();
+    }
 }
