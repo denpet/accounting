@@ -9,7 +9,7 @@ class ImportedClosedCash extends Model
     protected $table = 'eden.imported_closed_cash';
     protected $primaryKey = 'id';
     protected $keyType = 'string';
-    protected $fillable = [];
+    protected $fillable = ['id'];
     public $timestamps = false;
     public $incrementing = false;
 }
