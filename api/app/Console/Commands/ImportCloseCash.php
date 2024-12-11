@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use App\Models\Accounting\Transaction;
 use App\Models\Unicenta\ImportedClosedCash;
 use Illuminate\Console\Command;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -135,15 +136,19 @@ class ImportCloseCash extends Command
                 }
 
                 Transaction::create($transaction);
-                ImportedClosedCash::create(['id' => $closedCashRow->money]);
-                echo "Saved transaction\n";
+                try {
+                    ImportedClosedCash::create(['id' => $closedCashRow->money]);
+                } catch (UniqueConstraintViolationException $e) {
+                }
+                $this->line("Saved transaction");
             }
         } catch (Throwable $e) {
-            echo sprintf("Error: " . $e->getMessage());
-            var_dump($closedCashRow);
+            $className = class_basename(get_class($e));
+            Log::error("{$className} {$e->getFile()}:{$e->getLine()} {$e->getCode()}:{$e->getMessage()}\n{$e->getTraceAsString()}");
+            $this->line($e->getMessage());
         }
 
         $time0 = microtime(true);
-        echo sprintf("(%.0f seconds)\n", microtime(true) - $time0);
+        $this->line(sprintf("(%.0f seconds)", microtime(true) - $time0));
     }
 }
