@@ -28,8 +28,7 @@ class ProductController extends RestController
             FROM products p
             JOIN products_cat pc ON p.id=pc.product
             JOIN categories c ON p.category = c.id
-            WHERE catshowname
-	            AND c.name in (
+            WHERE c.name in (
                     'Pasta',
                     'Salad',
                     'Soup',
@@ -50,7 +49,8 @@ class ProductController extends RestController
                     'Seafood',
                     'Noodles',
                     'Breakfast',
-                    'Beef'
+                    'Beef',
+                    'Add-ons'
                 )
             ORDER BY c.name, p.name"
         );
