@@ -32,7 +32,6 @@ export const useUnicentaProductStore = defineStore('unicenta/product', () => {
     return api
       .put(`unicenta/products/pricebuy/${id}`, { pricebuy: pricebuy })
       .then(() => {
-        fetchPricebuyIndex()
         Notify.create({
           message: 'Updated',
           type: 'positive',

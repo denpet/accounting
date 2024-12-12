@@ -13,6 +13,9 @@
           v-model="cell.row.pricebuy"
           label="Cost"
           @change="onUpdatePricebuy(cell.row)"
+          :hide-bottom-space="cell.row.$error === undefined"
+          :error="cell.row.$error !== undefined"
+          :error-message="cell.row.$error?.toString()"
         />
       </template>
     </q-table>
@@ -26,8 +29,16 @@ import { QTableColumn } from 'quasar'
 const productStore = useUnicentaProductStore()
 productStore.fetchPricebuyIndex()
 
-const onUpdatePricebuy = (row: { id: string; pricebuy: number }) => {
-  productStore.updatePricebuy(row.id, row.pricebuy)
+const onUpdatePricebuy = (row: {
+  id: string
+  pricebuy: number
+  $error: string | undefined
+}) => {
+  row.$error = undefined
+  productStore.updatePricebuy(row.id, row.pricebuy).catch((data) => {
+    console.log(data.message)
+    row.$error = data.message
+  })
 }
 
 const columns: QTableColumn[] = [
