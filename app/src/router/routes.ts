@@ -117,6 +117,15 @@ const routes: RouteRecordRaw[] = [
               },
             ],
           },
+          {
+            path: 'product',
+            children: [
+              {
+                path: 'pricebuy',
+                component: () => import('pages/Unicenta/PricebuyPage.vue'),
+              },
+            ],
+          },
         ],
       },
     ],

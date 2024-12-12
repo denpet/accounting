@@ -9,6 +9,7 @@ use App\Http\Controllers\Global\CountryController;
 use App\Http\Controllers\Payroll\EmployeeController;
 use App\Http\Controllers\Payroll\TimeRecordController;
 use App\Http\Controllers\Unicenta\CustomerController;
+use App\Http\Controllers\Unicenta\ProductController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\UserController;
@@ -75,6 +76,12 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
 
     Route::group(['prefix' => 'unicenta'], function () {
         Route::apiResource('customers', CustomerController::class);
+
+        Route::group(['prefix' => 'products'], function () {
+            Route::get('pricebuy', [ProductController::class, 'pricebuyIndex']);
+            Route::put('pricebuy/{id}', [ProductController::class, 'pricebuyUpdate']);
+        });
+
         Route::group(['prefix' => 'reports'], function () {
             Route::get('statement-of-account', [StatementOfAccountController::class, 'index']);
             Route::get('statement-of-account/{id}', [StatementOfAccountController::class, 'show']);
