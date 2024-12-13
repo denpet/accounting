@@ -202,6 +202,17 @@
               </q-item-section>
             </q-item>
             <q-item
+              to="/unicenta/reports/cost-income"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-cash" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Cost / Income</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
               to="/unicenta/product/pricebuy"
               active-class="q-item-no-link-highlighting"
             >

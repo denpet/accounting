@@ -115,6 +115,11 @@ const routes: RouteRecordRaw[] = [
                 component: () =>
                   import('pages/Unicenta/Report/StatementOfAccountPage.vue'),
               },
+              {
+                path: 'cost-income',
+                component: () =>
+                  import('pages/Unicenta/Report/CostIncomePage.vue'),
+              },
             ],
           },
           {

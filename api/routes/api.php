@@ -10,6 +10,7 @@ use App\Http\Controllers\Payroll\EmployeeController;
 use App\Http\Controllers\Payroll\TimeRecordController;
 use App\Http\Controllers\Unicenta\CustomerController;
 use App\Http\Controllers\Unicenta\ProductController;
+use App\Http\Controllers\Unicenta\Report\CostIncomeController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\UserController;
@@ -85,6 +86,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::group(['prefix' => 'reports'], function () {
             Route::get('statement-of-account', [StatementOfAccountController::class, 'index']);
             Route::get('statement-of-account/{id}', [StatementOfAccountController::class, 'show']);
+
+            Route::get('cost-income', [CostIncomeController::class, 'show']);
         });
     });
 });

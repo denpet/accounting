@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Unicenta\Report;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\View;
 
 class StatementOfAccountController extends Controller
 {
@@ -14,7 +12,7 @@ class StatementOfAccountController extends Controller
     {
         $data = ['tickets' => [], 'ticket_total' => 0, 'payment_total' => 0];
         $data['customer'] = DB::connection('unicenta')->selectOne(
-            "SELECT name, 
+            "SELECT name,
                 address,
                 address2,
                 postal,
@@ -28,12 +26,12 @@ class StatementOfAccountController extends Controller
 
         /* Tickets */
         $ticketRows = DB::connection('unicenta')->select(
-            "SELECT t.ticketid, 
-                p.name, 
-                tl.units, 
+            "SELECT t.ticketid,
+                p.name,
+                tl.units,
                 tl.price * (1+ta.rate) as price,
                 r.datenew
-            FROM tickets t 
+            FROM tickets t
             JOIN ticketlines tl on t.id=tl.ticket
             JOIN products p on tl.product=p.id
             JOIN taxes ta on tl.taxid=ta.id
@@ -61,13 +59,13 @@ class StatementOfAccountController extends Controller
 
         /* Payments */
         $data['payments'] = DB::connection('unicenta')->select(
-            "SELECT p.payment, 
-                p.total, 
+            "SELECT p.payment,
+                p.total,
                 r.datenew AS date
             FROM payments p
             JOIN receipts r on p.receipt = r.id
             JOIN tickets t on p.receipt = t.id
-            WHERE t.customer = :id 	
+            WHERE t.customer = :id
                 AND p.payment not in ('debt','debtpaid')
                 AND p.total>0.01
             ORDER BY r.datenew",
