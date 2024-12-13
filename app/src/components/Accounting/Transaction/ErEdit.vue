@@ -276,6 +276,7 @@ const toAccountOptions = computed(() => {
           51,
           53,
           54,
+          62,
           transactionStore.current?.to_account_id ?? 0,
         ].includes(value.value)
       })

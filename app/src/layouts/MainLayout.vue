@@ -202,6 +202,7 @@
               </q-item-section>
             </q-item>
             <q-item
+              v-if="auth.current.role_id === 1"
               to="/unicenta/reports/cost-income"
               active-class="q-item-no-link-highlighting"
             >
@@ -213,6 +214,7 @@
               </q-item-section>
             </q-item>
             <q-item
+              v-if="auth.current.role_id === 1"
               to="/unicenta/product/pricebuy"
               active-class="q-item-no-link-highlighting"
             >
