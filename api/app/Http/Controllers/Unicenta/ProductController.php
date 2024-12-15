@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Unicenta;
 
 use App\Http\Controllers\RestController;
-use App\Models\Unicenta\Customer;
 use App\Models\Unicenta\Product;
+use App\Models\Unicenta\ProductBundle;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 class ProductController extends RestController
 {
-    protected static $model = Customer::class;
+    protected static $model = Product::class;
     protected static $validations = [
         'name' => 'required|string',
     ];
@@ -63,6 +63,18 @@ class ProductController extends RestController
         ]);
         $product = Product::find($id);
         $product->pricebuy = $data['pricebuy'];
+        $product->save();
+    }
+
+    function bundleUpdate($id)
+    {
+        $data = Request::validate([
+            'product_bundle' => 'required|exists:.unicentaopos.products,id',
+            'quantity' => "required|numeric"
+        ]);
+        $product = ProductBundle::find($id);
+        $product->product_bundle = $data['product_bundle'];
+        $product->quantity = $data['quantity'];
         $product->save();
     }
 }

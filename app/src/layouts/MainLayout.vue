@@ -215,6 +215,18 @@
             </q-item>
             <q-item
               v-if="auth.current.role_id === 1"
+              to="/unicenta/product"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-cart-variant" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Product</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-if="auth.current.role_id === 1"
               to="/unicenta/product/pricebuy"
               active-class="q-item-no-link-highlighting"
             >

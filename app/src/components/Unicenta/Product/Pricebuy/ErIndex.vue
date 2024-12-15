@@ -36,7 +36,6 @@ const onUpdatePricebuy = (row: {
 }) => {
   row.$error = undefined
   productStore.updatePricebuy(row.id, row.pricebuy).catch((data) => {
-    console.log(data.message)
     row.$error = data.message
   })
 }

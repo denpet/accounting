@@ -8,7 +8,9 @@ use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
 use App\Http\Controllers\Payroll\EmployeeController;
 use App\Http\Controllers\Payroll\TimeRecordController;
+use App\Http\Controllers\Unicenta\CategoryController;
 use App\Http\Controllers\Unicenta\CustomerController;
+use App\Http\Controllers\Unicenta\ProductBundleController;
 use App\Http\Controllers\Unicenta\ProductController;
 use App\Http\Controllers\Unicenta\Report\CostIncomeController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
@@ -82,6 +84,15 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::get('pricebuy', [ProductController::class, 'pricebuyIndex']);
             Route::put('pricebuy/{id}', [ProductController::class, 'pricebuyUpdate']);
         });
+
+        Route::get('products/options', [ProductController::class, 'options']);
+        Route::apiResource('products', ProductController::class);
+
+        Route::put('products/bundle/{id}',  [ProductController::class, 'bundleUpdate']);
+        Route::apiResource('products-bundle', ProductBundleController::class);
+
+        Route::get('categories/options', [CategoryController::class, 'options']);
+        Route::apiResource('categories', CategoryController::class);
 
         Route::group(['prefix' => 'reports'], function () {
             Route::get('statement-of-account', [StatementOfAccountController::class, 'index']);
