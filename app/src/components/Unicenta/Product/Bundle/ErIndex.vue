@@ -134,8 +134,7 @@ const onCreateBundle = () => {
     product_bundle: 'xxx999_999xxx_x9x9x9',
     quantity: 0,
   })
-  productBundleStore.store()
-  productBundleStore.fetchIndex()
+  productBundleStore.store().then(() => productBundleStore.fetchIndex())
 }
 const columns: QTableColumn[] = [
   {
