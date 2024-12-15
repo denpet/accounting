@@ -17,9 +17,9 @@ class ProductBundleController extends RestController
         'quantity' => 'required|numeric',
     ];
 
-    protected static $indexColumns = ['id', 'product_bundle_name'];
-    protected static $orderBy = ['product_bundle_name'];
-    protected static $optionColumn = 'product_bundle_name';
+    protected static $indexColumns = ['id', 'product_bundle'];
+    protected static $orderBy = ['product_bundle'];
+    protected static $optionColumn = 'product_bundle';
 
     public function index()
     {
