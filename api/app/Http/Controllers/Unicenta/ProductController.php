@@ -29,28 +29,17 @@ class ProductController extends RestController
             JOIN products_cat pc ON p.id=pc.product
             JOIN categories c ON p.category = c.id
             WHERE c.name in (
-                    'Pasta',
-                    'Salad',
-                    'Soup',
+                    'Bar Stock',
+                    'Beer',
                     'Canned / Bottled',
-                    'International',
-                    'Fresh Juice/Shake',
+                    'Cigarettes',
+                    'Fruit',
+                    'Intern products',
                     'Wine',
                     'Fruit',
-                    'Pizza',
-                    'Beer',
-                    'Sandwiches',
-                    'Dessert',
-                    'Short Orders',
-                    'Cocktails',
-                    'Hot',
-                    'Chicken',
-                    'Pork',
-                    'Seafood',
-                    'Noodles',
-                    'Breakfast',
-                    'Beef',
-                    'Add-ons'
+                    'Kitchen stock',
+                    'Stock Items',
+                    'Wine'
                 )
             ORDER BY c.name, p.name"
         );
