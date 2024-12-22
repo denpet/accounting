@@ -54,16 +54,4 @@ class ProductController extends RestController
         $product->pricebuy = $data['pricebuy'];
         $product->save();
     }
-
-    function bundleUpdate($id)
-    {
-        $data = Request::validate([
-            'product_bundle' => 'required|exists:.unicentaopos.products,id',
-            'quantity' => "required|numeric"
-        ]);
-        $product = ProductBundle::find($id);
-        $product->product_bundle = $data['product_bundle'];
-        $product->quantity = $data['quantity'];
-        $product->save();
-    }
 }

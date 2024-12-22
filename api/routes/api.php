@@ -84,11 +84,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::get('pricebuy', [ProductController::class, 'pricebuyIndex']);
             Route::put('pricebuy/{id}', [ProductController::class, 'pricebuyUpdate']);
         });
-
         Route::get('products/options', [ProductController::class, 'options']);
         Route::apiResource('products', ProductController::class);
 
-        Route::put('products/bundle/{id}',  [ProductController::class, 'bundleUpdate']);
+
+        Route::get('products-bundle/options', [ProductBundleController::class, 'options']);
         Route::apiResource('products-bundle', ProductBundleController::class);
 
         Route::get('categories/options', [CategoryController::class, 'options']);

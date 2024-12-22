@@ -1,7 +1,7 @@
 <template>
   <template class="row">
     <q-table
-      class="ellipsis col-3"
+      class="ellipsis col-5"
       :columns="columns"
       :rows="productStore.pricebuyIndex ?? []"
       row-key="id"
@@ -12,6 +12,10 @@
         <q-input
           v-model="cell.row.pricebuy"
           label="Cost"
+          mask="#.##"
+          fill-mask="0"
+          reverse-fill-mask
+          input-class="text-right"
           @change="onUpdatePricebuy(cell.row)"
           :hide-bottom-space="cell.row.$error === undefined"
           :error="cell.row.$error !== undefined"
@@ -35,7 +39,7 @@ const onUpdatePricebuy = (row: {
   $error: string | undefined
 }) => {
   row.$error = undefined
-  productStore.updatePricebuy(row.id, row.pricebuy).catch((data) => {
+  productStore.pricebuyUpdate(row.id, row.pricebuy).catch((data) => {
     row.$error = data.message
   })
 }

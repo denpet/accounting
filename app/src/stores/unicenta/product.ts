@@ -2,13 +2,7 @@ import { defineStore } from 'pinia'
 import { Ref, ref } from 'vue'
 import { Notify } from 'quasar'
 import { api } from 'boot/axios'
-
-export type ProductBundleObject = {
-  id: string | null
-  product: string
-  product_bundle: string
-  quantity: number
-}
+import { ProductBundleObject } from './product-bundle'
 
 export type ProductObject = {
   id: string | null
@@ -179,28 +173,9 @@ export const useUnicentaProductStore = (id = '') =>
         })
     }
 
-    const updatePricebuy = async (id: string, pricebuy: number) => {
+    const pricebuyUpdate = async (id: string, pricebuy: number) => {
       return api
         .put(`unicenta/products/pricebuy/${id}`, { pricebuy: pricebuy })
-        .then(() => {
-          Notify.create({
-            message: 'Updated',
-            type: 'positive',
-            position: 'top-right',
-            progress: true,
-          })
-        })
-        .catch((response) => {
-          throw new Error(response.response.data.message)
-        })
-    }
-
-    const updateBundle = async (
-      id: string,
-      bundle: { product_bundle: string; quantity: number },
-    ) => {
-      return api
-        .put(`unicenta/products/bundle/${id}`, bundle)
         .then(() => {
           Notify.create({
             message: 'Updated',
@@ -229,7 +204,6 @@ export const useUnicentaProductStore = (id = '') =>
       destroy,
       fetchPricebuyIndex,
       pricebuyIndex,
-      updatePricebuy,
-      updateBundle,
+      pricebuyUpdate,
     }
   })()

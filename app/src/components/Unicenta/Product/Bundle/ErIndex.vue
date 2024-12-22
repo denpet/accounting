@@ -101,17 +101,15 @@ const onUpdateBundle = (row: {
   $error: string | undefined
 }) => {
   row.$error = undefined
-  productStore
-    .updateBundle(row.id, {
-      product_bundle: row.product_bundle,
-      quantity: row.quantity,
-    })
-    .then(() => {
-      productBundleStore.fetchIndex()
-    })
-    .catch((data) => {
-      row.$error = data.message
-    })
+  productBundleStore.current = {
+    id: row.id,
+    product: productBundleStore.filter.product ?? '',
+    product_bundle: row.product_bundle,
+    quantity: row.quantity,
+  }
+  productBundleStore.update(row.id).catch((data) => {
+    row.$error = data.message
+  })
 }
 
 const onDeleteBundle = (id: string) => {
