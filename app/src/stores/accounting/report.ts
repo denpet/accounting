@@ -21,6 +21,7 @@ type TransactionsFilter = {
   from?: string
   to?: string
   account?: string
+  hideWithOR?: string
 }
 
 type AccountTransactionsFilter = {
@@ -33,6 +34,7 @@ type AccountTransactionsFilter = {
 export const useAccountingReportStore = defineStore('accounting/report', () => {
   const today = new Date()
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+  const firstDayOfYear = new Date(today.getFullYear(), 0, 1)
 
   const balance = ref()
   const balanceFilter: Ref<BalanaceFilter> = ref({
@@ -52,8 +54,9 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
 
   const transactions = ref()
   const transactionsFilter: Ref<TransactionsFilter> = ref({
-    from: firstDayOfMonth.toLocaleDateString('sv'),
+    from: firstDayOfYear.toLocaleDateString('sv'),
     to: today.toLocaleDateString('sv'),
+    hideWithOR: '0',
   })
 
   const accountTransactions = ref()

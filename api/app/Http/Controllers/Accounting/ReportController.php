@@ -257,7 +257,7 @@ class ReportController extends Controller
             $accountWhere = "AND :account IN (from_account_id, to_account_id)";
             $params['account'] = $account;
         }
-        return DB::select(
+        $transactions = DB::select(
             "SELECT t.id,
 	            date,
 	            note,
@@ -275,6 +275,14 @@ class ReportController extends Controller
             ORDER BY date, id",
             $params
         );
+        if (Request::input('hideWithOR', '0') !== '0') {
+            foreach ($transactions as $key => $transaction) {
+                if (count(glob(config('eden.eden_receipt_dir') . "/{$transaction->id}_*"))) {
+                    unset($transactions[$key]);
+                }
+            }
+        }
+        return array_values($transactions);
     }
 
     public function accountTransactions()

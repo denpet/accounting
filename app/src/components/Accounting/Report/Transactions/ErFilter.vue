@@ -74,6 +74,12 @@
         </q-item>
       </template>
     </q-select>
+    <q-toggle
+      label="Hide with o.r."
+      v-model="reportStore.transactionsFilter.hideWithOR"
+      true-value="1"
+      false-value="0"
+    />
   </q-form>
 </template>
 
