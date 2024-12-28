@@ -189,6 +189,29 @@ export const useUnicentaProductStore = (id = '') =>
         })
     }
 
+    const registerPurchase = async (
+      id: string,
+      quantity: number,
+      amount: number,
+    ) => {
+      return api
+        .put(`unicenta/products/register-purchase/${id}`, {
+          quantity: quantity,
+          amount: amount,
+        })
+        .then(() => {
+          Notify.create({
+            message: 'Updated',
+            type: 'positive',
+            position: 'top-right',
+            progress: true,
+          })
+        })
+        .catch((response) => {
+          throw new Error(response.response.data.message)
+        })
+    }
+
     return {
       index,
       options,
@@ -205,5 +228,6 @@ export const useUnicentaProductStore = (id = '') =>
       fetchPricebuyIndex,
       pricebuyIndex,
       pricebuyUpdate,
+      registerPurchase,
     }
   })()

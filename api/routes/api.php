@@ -83,6 +83,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::group(['prefix' => 'products'], function () {
             Route::get('pricebuy', [ProductController::class, 'pricebuyIndex']);
             Route::put('pricebuy/{id}', [ProductController::class, 'pricebuyUpdate']);
+            Route::put('register-purchase/{id}', [ProductController::class, 'registerPurchase']);
         });
         Route::get('products/options', [ProductController::class, 'options']);
         Route::apiResource('products', ProductController::class);

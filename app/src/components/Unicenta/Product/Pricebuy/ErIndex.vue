@@ -12,9 +12,6 @@
         <q-input
           v-model="cell.row.pricebuy"
           label="Cost"
-          mask="#.##"
-          fill-mask="0"
-          reverse-fill-mask
           input-class="text-right"
           @change="onUpdatePricebuy(cell.row)"
           :hide-bottom-space="cell.row.$error === undefined"

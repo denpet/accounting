@@ -201,42 +201,58 @@
                 <q-item-label>Stament-of-account</q-item-label>
               </q-item-section>
             </q-item>
-            <q-item
+            <q-expansion-item
               v-if="auth.current.role_id === 1"
-              to="/unicenta/reports/cost-income"
-              active-class="q-item-no-link-highlighting"
+              icon="mdi-cart-variant"
+              label="Product"
             >
-              <q-item-section avatar>
-                <q-icon name="mdi-cash" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Cost / Income</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="auth.current.role_id === 1"
-              to="/unicenta/product"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section avatar>
-                <q-icon name="mdi-cart-variant" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Product</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              v-if="auth.current.role_id === 1"
-              to="/unicenta/product/pricebuy"
-              active-class="q-item-no-link-highlighting"
-            >
-              <q-item-section avatar>
-                <q-icon name="mdi-currency-usd" />
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>Product Cost</q-item-label>
-              </q-item-section>
-            </q-item>
+              <q-list class="q-pl-lg">
+                <q-item
+                  to="/unicenta/reports/cost-income"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-cash" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Cost / Income</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/unicenta/product"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-cart-variant" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Bundles</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/unicenta/product/pricebuy"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-currency-usd" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Cost</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/unicenta/product/purchase"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-currency-usd" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Purchase</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </q-list>
         </q-expansion-item>
         <q-expansion-item
