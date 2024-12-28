@@ -9,6 +9,7 @@ use App\Models\Unicenta\StockDiary;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Str;
 
 class ProductController extends RestController
 {
@@ -57,16 +58,6 @@ class ProductController extends RestController
         $product->save();
     }
 
-    private function uuidv4()
-    {
-        $data = random_bytes(16);
-
-        $data[6] = chr(ord($data[6]) & 0x0f | 0x40); // set version to 0100
-        $data[8] = chr(ord($data[8]) & 0x3f | 0x80); // set bits 6-7 to 10
-
-        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($data), 4));
-    }
-
     function registerPurchase($id)
     {
         $data = Request::validate([
@@ -86,7 +77,7 @@ class ProductController extends RestController
 
         /* Update stock diary */
         StockDiary::create([
-            'id' => $this->uuidv4(),
+            'id' => Str::uuid(),
             'datenew' => Date('Y-m-d H:i:s'),
             'reason' => 1,
             'location' => 0,
