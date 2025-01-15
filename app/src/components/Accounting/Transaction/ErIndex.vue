@@ -46,7 +46,9 @@ import { QTable, QTableColumn } from 'quasar'
 import { onMounted, Ref, ref } from 'vue'
 
 const transactionStore = useAccountingTransactionStore()
-transactionStore.filter.date = '2024%'
+const today = new Date()
+const year = today.getFullYear()
+transactionStore.filter.date = `${year}%`
 transactionStore.fetchIndex()
 const table: Ref<QTable | null> = ref(null)
 
