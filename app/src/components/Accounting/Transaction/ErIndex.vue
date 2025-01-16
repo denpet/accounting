@@ -26,10 +26,26 @@
       />
       <q-input
         v-model="transactionStore.filter.note"
-        class="q-ml-md"
+        class="q-mx-md"
         label="Search"
-        :error="transactionStore.errors?.supplier_id !== undefined"
-        :error-message="transactionStore.errors?.supplier_id?.toString()"
+        @update:model-value="transactionStore.fetchIndex()"
+        debounce="500"
+      />
+      <q-select
+        label="Year"
+        v-model="transactionStore.filter.date"
+        :options="[
+          {
+            label: '2024',
+            value: '2024%',
+          },
+          {
+            label: '2025',
+            value: '2025%',
+          },
+        ]"
+        map-options
+        emit-value
         @update:model-value="transactionStore.fetchIndex()"
         debounce="500"
       />
