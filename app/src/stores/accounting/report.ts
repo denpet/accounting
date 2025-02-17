@@ -66,6 +66,12 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
     details: 'yes',
   })
 
+  const closedCash = ref()
+  const closedCashFilter: Ref<AccountTransactionsFilter> = ref({
+    from: firstDayOfMonth.toLocaleDateString('sv'),
+    to: today.toLocaleDateString('sv'),
+  })
+
   const fetchBalance = async () => {
     const urlParams = new URLSearchParams(
       Object.entries(balanceFilter.value).filter((el) => el[1] !== undefined),
@@ -163,6 +169,25 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
       })
   }
 
+  const fetchClosedCash = async () => {
+    const urlParams = new URLSearchParams(
+      Object.entries(closedCashFilter.value).filter((el) => el[1] !== null),
+    )
+    return api
+      .get(`accounting/report/closed-cash?${urlParams}`)
+      .then((response) => {
+        closedCash.value = response.data
+      })
+      .catch((error) => {
+        Notify.create({
+          message: `Error reading. ${error.response?.data}`,
+          type: 'negative',
+          position: 'top-right',
+          progress: true,
+        })
+      })
+  }
+
   return {
     balanceFilter,
     balance,
@@ -179,5 +204,8 @@ export const useAccountingReportStore = defineStore('accounting/report', () => {
     accountTransactionsFilter,
     accountTransactions,
     fetchAccountTransactions,
+    closedCashFilter,
+    closedCash,
+    fetchClosedCash,
   }
 })

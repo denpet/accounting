@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\Controller;
+use DateTime;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
@@ -272,7 +273,7 @@ class ReportController extends Controller
             JOIN eden.accounts to_account ON t.to_account_id = to_account.id
             WHERE date BETWEEN :from AND :to
             $accountWhere
-            ORDER BY date, id",
+0            ORDER BY date, id",
             $params
         );
         if (Request::input('hideWithOR', '0') !== '0') {
@@ -368,5 +369,73 @@ class ReportController extends Controller
             $result[$date]['transactions'][] = $transaction;
         }
         return array_values($result);
+    }
+
+    public function closedCash()
+    {
+        $params = [
+            'from' => Request::input('from', Date('Y-01-01')),
+            'to' => Request::input('to', Date('Y-12-31')),
+        ];
+
+        $cashTransactions = DB::select(
+            "SELECT date,
+                SUM(IF(from_account_id=1,-amount,amount)) AS amount
+            FROM eden.transactions
+            WHERE date BETWEEN :from AND :to AND 1 IN (from_account_id, to_account_id)
+            GROUP BY date
+            ORDER BY date",
+            $params
+        );
+        $cashTransactions = array_combine(array_column($cashTransactions, 'date'), $cashTransactions);
+
+        $emergencyTransactions = DB::select(
+            "SELECT date,
+                SUM(IF(from_account_id=62,-amount,amount)) AS amount
+            FROM eden.transactions
+            WHERE date BETWEEN :from AND :to AND 62 IN (from_account_id, to_account_id)
+            GROUP BY date
+            ORDER BY date",
+            $params
+        );
+        $emergencyTransactions = array_combine(array_column($emergencyTransactions, 'date'), $emergencyTransactions);
+
+        $yesterday = (new DateTime($params['from']))->modify('-1 day')->format('Y-m-d');
+        $closed = DB::select(
+            "SELECT date,
+            	amount,
+            	emergency
+            FROM cash c1
+            WHERE date BETWEEN :from AND :to
+            	AND datetime IN (
+	            	SELECT MAX(datetime)
+	            	FROM cash c2
+	            	WHERE c2.date=c1.date
+	            )
+            ORDER BY date",
+            [
+                'from' => $yesterday,
+                'to' => $params['to']
+            ]
+        );
+        $closed = array_combine(array_column($closed, 'date'), $closed);
+
+        $result = [];
+        for ($date = new DateTime($params['from']); $date <= new DateTime($params['to']); $date->modify('+1 day')) {
+            $today = $date->format('Y-m-d');
+            $yesterday = (new DateTime($today))->modify('-1 day')->format('Y-m-d');
+            $result[] = [
+                'date' => $today,
+                'cash' => $closed[$today]->amount ?? 0,
+                'cashChange' => $cashTransactions[$today]->amount ?? 0,
+                'cashExpected' => ($closed[$yesterday]->amount ?? 0) + ($cashTransactions[$today]->amount ?? 0),
+                'cashDiscrepancy' => ($closed[$today]->amount ?? 0) - ($closed[$yesterday]->amount ?? 0) - ($cashTransactions[$today]->amount ?? 0),
+                'emergency' => $closed[$today]->emergency ?? 0,
+                'emergencyChange' => $emergencyTransactions[$today]->amount ?? 0,
+                'emergencyExpected' => ($closed[$yesterday]->emergency ?? 0) + ($emergencyTransactions[$today]->amount ?? 0),
+                'emergencyDiscrepancy' => ($closed[$today]->emergency ?? 0) - ($closed[$yesterday]->emergency ?? 0) - ($emergencyTransactions[$today]->amount ?? 0),
+            ];
+        }
+        return $result;
     }
 }

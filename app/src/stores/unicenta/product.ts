@@ -212,6 +212,24 @@ export const useUnicentaProductStore = (id = '') =>
         })
     }
 
+    const registerCycleCount = async (id: string, quantity: number) => {
+      return api
+        .put(`unicenta/products/register-cycle-count/${id}`, {
+          quantity: quantity,
+        })
+        .then(() => {
+          Notify.create({
+            message: 'Updated',
+            type: 'positive',
+            position: 'top-right',
+            progress: true,
+          })
+        })
+        .catch((response) => {
+          throw new Error(response.response.data.message)
+        })
+    }
+
     return {
       index,
       options,
@@ -229,5 +247,6 @@ export const useUnicentaProductStore = (id = '') =>
       pricebuyIndex,
       pricebuyUpdate,
       registerPurchase,
+      registerCycleCount,
     }
   })()

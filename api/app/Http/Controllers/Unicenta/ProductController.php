@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
 
 class ProductController extends RestController
 {
+    const LOCATION = 0;
+
     protected static $model = Product::class;
     protected static $validations = [
         'name' => 'required|string',
@@ -80,9 +82,34 @@ class ProductController extends RestController
             'id' => Str::uuid(),
             'datenew' => Date('Y-m-d H:i:s'),
             'reason' => 1,
-            'location' => 0,
+            'location' => static::LOCATION,
             'product' => $id,
             'units' => $data['quantity'],
+            'price' => $product->pricebuy,
+            'appuser' => Auth::user()->name
+        ]);
+    }
+
+    function registerCycleCount($id)
+    {
+        $data = Request::validate(['quantity' => "required|numeric"]);
+
+        $product = Product::find($id);
+
+        /* Update stock */
+        $stockCurrent = StockCurrent::find($id);
+        $adjustment = $data['quantity'] - $stockCurrent->units;
+        $stockCurrent->units = $data['quantity'];
+        $stockCurrent->save();
+
+        /* Update stock diary */
+        StockDiary::create([
+            'id' => Str::uuid(),
+            'datenew' => Date('Y-m-d H:i:s'),
+            'reason' => 0,
+            'location' => static::LOCATION,
+            'product' => $id,
+            'units' => $adjustment,
             'price' => $product->pricebuy,
             'appuser' => Auth::user()->name
         ]);

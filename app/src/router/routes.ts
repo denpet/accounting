@@ -78,6 +78,11 @@ const routes: RouteRecordRaw[] = [
                 component: () =>
                   import('pages/Accounting/Report/AccountTransactionPage.vue'),
               },
+              {
+                path: 'closed-cash',
+                component: () =>
+                  import('pages/Accounting/Report/ClosedCashPage.vue'),
+              },
             ],
           },
         ],
@@ -136,6 +141,10 @@ const routes: RouteRecordRaw[] = [
               {
                 path: 'purchase',
                 component: () => import('pages/Unicenta/PurchasePage.vue'),
+              },
+              {
+                path: 'cycle-count',
+                component: () => import('pages/Unicenta/CycleCountPage.vue'),
               },
             ],
           },

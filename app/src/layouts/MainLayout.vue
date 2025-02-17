@@ -165,6 +165,17 @@
                     <q-item-label>Account Transactions</q-item-label>
                   </q-item-section>
                 </q-item>
+                <q-item
+                  to="/accounting/report/closed-cash"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-money" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Closed Cash</q-item-label>
+                  </q-item-section>
+                </q-item>
               </q-list>
             </q-expansion-item>
           </q-list>
@@ -249,6 +260,17 @@
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>Purchase</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
+                  to="/unicenta/product/cycle-count"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-tally-mark-5" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Cycle Count</q-item-label>
                   </q-item-section>
                 </q-item>
               </q-list>
