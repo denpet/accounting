@@ -33,9 +33,9 @@
     </q-input>
     <q-input
       class="q-pr-xs"
-      label="0.01"
+      label="Cash transfered from drawer to safe, including foreign currency peso equivalent"
       dense
-      v-model.number="money1"
+      v-model.number="cashStore.current.amount"
       :rules="[
         (val) =>
           Number(val) === val || 'Field is required and must be a number',
@@ -43,137 +43,7 @@
     />
     <q-input
       class="q-pr-xs"
-      label="0.05"
-      dense
-      v-model.number="money5"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="0.10"
-      dense
-      v-model.number="money10"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="0.25"
-      dense
-      v-model.number="money25"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="1"
-      dense
-      v-model.number="money100"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="5"
-      dense
-      v-model.number="money500"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="10"
-      dense
-      v-model.number="money1000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="20"
-      dense
-      v-model.number="money2000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="50"
-      dense
-      v-model.number="money5000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="100"
-      dense
-      v-model.number="money10000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="200"
-      dense
-      v-model.number="money20000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="500"
-      dense
-      v-model.number="money50000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="1000"
-      dense
-      v-model.number="money100000"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="Foreign currency, PHP equivalent"
-      dense
-      v-model.number="foreign"
-      :rules="[
-        (val) =>
-          Number(val) === val || 'Field is required and must be a number',
-      ]"
-    />
-    <q-input
-      class="q-pr-xs"
-      label="In safe"
+      label="In safe, after adding from drawer. Including voucher and foreign currency peso equivalent"
       dense
       v-model.number="cashStore.current.safe"
       :rules="[

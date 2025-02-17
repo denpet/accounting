@@ -403,7 +403,7 @@ class ReportController extends Controller
         $yesterday = (new DateTime($params['from']))->modify('-1 day')->format('Y-m-d');
         $closed = DB::select(
             "SELECT date,
-            	amount,
+            	safe,
             	emergency
             FROM cash c1
             WHERE date BETWEEN :from AND :to
@@ -426,10 +426,10 @@ class ReportController extends Controller
             $yesterday = (new DateTime($today))->modify('-1 day')->format('Y-m-d');
             $result[] = [
                 'date' => $today,
-                'cash' => $closed[$today]->amount ?? 0,
+                'cash' => $closed[$today]->safe ?? 0,
                 'cashChange' => $cashTransactions[$today]->amount ?? 0,
-                'cashExpected' => ($closed[$yesterday]->amount ?? 0) + ($cashTransactions[$today]->amount ?? 0),
-                'cashDiscrepancy' => ($closed[$today]->amount ?? 0) - ($closed[$yesterday]->amount ?? 0) - ($cashTransactions[$today]->amount ?? 0),
+                'cashExpected' => ($closed[$yesterday]->safe ?? 0) + ($cashTransactions[$today]->amount ?? 0),
+                'cashDiscrepancy' => ($closed[$today]->safe ?? 0) - ($closed[$yesterday]->safe ?? 0) - ($cashTransactions[$today]->amount ?? 0),
                 'emergency' => $closed[$today]->emergency ?? 0,
                 'emergencyChange' => $emergencyTransactions[$today]->amount ?? 0,
                 'emergencyExpected' => ($closed[$yesterday]->emergency ?? 0) + ($emergencyTransactions[$today]->amount ?? 0),

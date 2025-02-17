@@ -5,53 +5,19 @@
     :rows-per-page-options="[0]"
     dense
   >
-    <template #body="body">
-      <template v-if="reportStore.closedCashFilter.details === 'yes'">
-        <q-tr>
-          <q-td colspan="8" style="border-top: solid 2px; font-weight: bold">
-            {{ body.row.date }}
-          </q-td>
-        </q-tr>
-        <q-tr
-          v-for="transaction in body.row.transactions"
-          :key="transaction.id"
-        >
-          <q-td />
-          <q-td align="left">{{ transaction.id }}</q-td>
-          <q-td align="left">{{ transaction.note }}</q-td>
-          <q-td align="left">{{ transaction.from_account_name }}</q-td>
-          <q-td align="left">{{ transaction.to_account_name }}</q-td>
-          <q-td align="right">{{ format.number(transaction.amount) }}</q-td>
-          <q-td align="right">{{ format.number(transaction.balance) }}</q-td>
-          <q-td />
-        </q-tr>
-        <q-tr>
-          <q-td
-            v-for="col in body.cols"
-            :key="col.name"
-            :align="col.align"
-            style="
-              border-top: double 1px;
-              font-weight: bold;
-              height: 50px;
-              vertical-align: top;
-            "
-          >
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-      </template>
-      <template v-else>
-        <q-tr
-          :props="body"
-          :class="body.expand ? '' : 'cursor-pointer'"
-          @click="body.expand = true"
-        >
-          <q-td v-for="col in body.cols" :key="col.name" :align="col.align">
-            {{ col.value }}
-          </q-td>
-        </q-tr>
-      </template>
+    <template v-slot:bottom-row>
+      <q-tr />
+      <q-tr class="text-bold">
+        <q-td>Total</q-td>
+        <q-td colspan="3" />
+        <q-td align="right">{{
+          format.number(totalCashDiscrepancy, 0, true)
+        }}</q-td>
+        <q-td colspan="3" />
+        <q-td align="right">{{
+          format.number(totalEmergencyDiscrepancy, 0, true)
+        }}</q-td>
+      </q-tr>
     </template>
   </q-table>
 </template>
@@ -60,8 +26,27 @@
 import { QTableColumn } from 'quasar'
 import { format } from 'boot/format'
 import { useAccountingReportStore } from 'stores/accounting/report'
+import { computed } from 'vue'
 
 const reportStore = useAccountingReportStore()
+
+const totalCashDiscrepancy = computed(() => {
+  if (reportStore.closedCash === undefined) return 0
+  let sum = 0
+  for (const row of reportStore.closedCash) {
+    sum += row.cashDiscrepancy
+  }
+  return sum
+})
+
+const totalEmergencyDiscrepancy = computed(() => {
+  if (reportStore.closedCash === undefined) return 0
+  let sum = 0
+  for (const row of reportStore.closedCash) {
+    sum += row.emergencyDiscrepancy
+  }
+  return sum
+})
 
 const columns: QTableColumn[] = [
   {
