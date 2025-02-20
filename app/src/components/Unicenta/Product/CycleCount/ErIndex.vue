@@ -50,7 +50,7 @@ const onRegisterCycleCount = (row: {
   productStore
     .registerCycleCount(row.id, row.quantity)
     .then(() => {
-      productStore.index = productStore.index.filter(
+      productStore.cycleCountIndex = productStore.cycleCountIndex.filter(
         (val: { id: string }) => val.id !== row.id,
       )
     })
