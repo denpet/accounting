@@ -90,6 +90,32 @@ class ProductController extends RestController
         ]);
     }
 
+    function cycleCountIndex()
+    {
+        return DB::connection('unicenta')->select(
+            "SELECT p.id,
+                p.name,
+                c.name AS category_name
+            FROM products p
+            JOIN products_cat pc ON p.id=pc.product
+            JOIN categories c ON p.category = c.id
+            WHERE c.name in (
+                    'Bar Stock',
+                    'Beer',
+                    'Canned / Bottled',
+                    'Cigarettes',
+                    'Fruit',
+                    'Intern products',
+                    'Wine',
+                    'Fruit',
+                    'Kitchen stock',
+                    'Stock Items',
+                    'Wine'
+                )
+            ORDER BY c.name, p.name"
+        );
+    }
+
     function registerCycleCount($id)
     {
         $data = Request::validate(['quantity' => "required|numeric"]);

@@ -3,7 +3,7 @@
     <q-table
       class="ellipsis col-5"
       :columns="columns"
-      :rows="productStore.index ?? []"
+      :rows="productStore.cycleCountIndex ?? []"
       row-key="id"
       :rows-per-page-options="[0]"
       dense
@@ -23,7 +23,7 @@
       <template #body-cell-action="cell">
         <q-td>
           <q-btn
-            v-if="cell.row.quantity && cell.row.amount"
+            v-if="cell.row.quantity"
             label="Register"
             icon="mdi-file"
             @click="onRegisterCycleCount(cell.row)"
@@ -39,7 +39,7 @@ import { useUnicentaProductStore } from 'stores/unicenta/product'
 import { QTableColumn } from 'quasar'
 
 const productStore = useUnicentaProductStore()
-productStore.fetchPricebuyIndex()
+productStore.fetchCycleCountIndex()
 
 const onRegisterCycleCount = (row: {
   id: string

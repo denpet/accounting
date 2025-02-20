@@ -32,6 +32,8 @@ export const useUnicentaProductStore = (id = '') =>
 
     const pricebuyIndex = ref([])
 
+    const cycleCountIndex = ref([])
+
     const fetchIndex = async () => {
       const urlParams = new URLSearchParams(
         Object.entries(filter.value).filter((el) => el[1] !== undefined),
@@ -212,6 +214,22 @@ export const useUnicentaProductStore = (id = '') =>
         })
     }
 
+    const fetchCycleCountIndex = async () => {
+      return api
+        .get('unicenta/products/cycle-count')
+        .then((response) => {
+          cycleCountIndex.value = response.data
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `Error reading. ${error.response?.data}`,
+            type: 'negative',
+            position: 'top-right',
+            progress: true,
+          })
+        })
+    }
+
     const registerCycleCount = async (id: string, quantity: number) => {
       return api
         .put(`unicenta/products/register-cycle-count/${id}`, {
@@ -247,6 +265,8 @@ export const useUnicentaProductStore = (id = '') =>
       pricebuyIndex,
       pricebuyUpdate,
       registerPurchase,
+      fetchCycleCountIndex,
+      cycleCountIndex,
       registerCycleCount,
     }
   })()
