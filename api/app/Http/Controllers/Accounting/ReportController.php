@@ -273,7 +273,7 @@ class ReportController extends Controller
             JOIN eden.accounts to_account ON t.to_account_id = to_account.id
             WHERE date BETWEEN :from AND :to
             $accountWhere
-0            ORDER BY date, id",
+            ORDER BY date, id",
             $params
         );
         if (Request::input('hideWithOR', '0') !== '0') {
