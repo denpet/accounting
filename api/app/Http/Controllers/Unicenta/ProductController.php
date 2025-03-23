@@ -81,7 +81,7 @@ class ProductController extends RestController
         StockDiary::create([
             'id' => Str::uuid(),
             'datenew' => Date('Y-m-d H:i:s'),
-            'reason' => 1,
+            'reason' => StockDiary::REASON_IN_PURCHASE,
             'location' => static::LOCATION,
             'product' => $id,
             'units' => $data['quantity'],
@@ -132,7 +132,7 @@ class ProductController extends RestController
         StockDiary::create([
             'id' => Str::uuid(),
             'datenew' => Date('Y-m-d H:i:s'),
-            'reason' => 0,
+            'reason' => StockDiary::REASON_CYCLE_COUNT,
             'location' => static::LOCATION,
             'product' => $id,
             'units' => $adjustment,
