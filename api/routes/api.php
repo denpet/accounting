@@ -14,6 +14,7 @@ use App\Http\Controllers\Unicenta\ProductBundleController;
 use App\Http\Controllers\Unicenta\ProductController;
 use App\Http\Controllers\Unicenta\Report\CostIncomeController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
+use App\Http\Controllers\Unicenta\Report\StockDiaryController;
 use App\Http\Controllers\User\RoleController;
 use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
@@ -89,6 +90,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::put('register-cycle-count/{id}', [ProductController::class, 'registerCycleCount']);
         });
         Route::get('products/options', [ProductController::class, 'options']);
+        Route::get('products/stock-options', [ProductController::class, 'stockOptions']);
         Route::apiResource('products', ProductController::class);
 
 
@@ -103,6 +105,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::get('statement-of-account/{id}', [StatementOfAccountController::class, 'show']);
 
             Route::get('cost-income', [CostIncomeController::class, 'show']);
+
+            Route::get('stock-diary', [StockDiaryController::class, 'show']);
         });
     });
 });

@@ -275,6 +275,25 @@
                 </q-item>
               </q-list>
             </q-expansion-item>
+            <q-expansion-item
+              v-if="auth.current.role_id === 1"
+              icon="mdi-cart-variant"
+              label="Reports"
+            >
+              <q-list class="q-pl-lg">
+                <q-item
+                  to="/unicenta/reports/stock-diary"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-cash" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Stock diary</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-expansion-item>
           </q-list>
         </q-expansion-item>
         <q-expansion-item

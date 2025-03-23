@@ -90,6 +90,31 @@ class ProductController extends RestController
         ]);
     }
 
+    function stockOptions()
+    {
+        return DB::connection('unicenta')->select(
+            "SELECT p.id AS value,
+                CONCAT(p.name, ' (', c.name, ')') AS label
+            FROM products p
+            JOIN products_cat pc ON p.id=pc.product
+            JOIN categories c ON p.category = c.id
+            WHERE c.name in (
+                    'Bar Stock',
+                    'Beer',
+                    'Canned / Bottled',
+                    'Cigarettes',
+                    'Fruit',
+                    'Intern products',
+                    'Wine',
+                    'Fruit',
+                    'Kitchen stock',
+                    'Stock Items',
+                    'Wine'
+                )
+            ORDER BY c.name, p.name"
+        );
+    }
+
     function cycleCountIndex()
     {
         return DB::connection('unicenta')->select(

@@ -72,6 +72,25 @@ export const useUnicentaProductStore = (id = '') =>
         })
     }
 
+    const fetchStockOptions = async () => {
+      const urlParams = new URLSearchParams(
+        Object.entries(filter.value).filter((el) => el[1] !== undefined),
+      )
+      return api
+        .get(`unicenta/products/stock-options?${urlParams}`)
+        .then((response) => {
+          options.value = response.data
+        })
+        .catch((error) => {
+          Notify.create({
+            message: `Error reading. ${error.response?.data}`,
+            type: 'negative',
+            position: 'top-right',
+            progress: true,
+          })
+        })
+    }
+
     const show = async (id: string) => {
       return api
         .get(`unicenta/products/${id}`)
@@ -256,6 +275,7 @@ export const useUnicentaProductStore = (id = '') =>
       filter,
       fetchIndex,
       fetchOptions,
+      fetchStockOptions,
       show,
       create,
       store,

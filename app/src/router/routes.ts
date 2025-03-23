@@ -125,6 +125,11 @@ const routes: RouteRecordRaw[] = [
                 component: () =>
                   import('pages/Unicenta/Report/CostIncomePage.vue'),
               },
+              {
+                path: 'stock-diary',
+                component: () =>
+                  import('pages/Unicenta/Report/StockDiaryPage.vue'),
+              },
             ],
           },
           {
