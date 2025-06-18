@@ -361,7 +361,7 @@ const onCreateSupplier = () => {
 const onComputeVat = () => {
   if (transactionStore.current && transactionStore.current.amount) {
     transactionStore.current.vat =
-      Math.round(100 * transactionStore.current.amount * (1 - 1 / 1.12)) * 100
+      Math.round(100 * transactionStore.current.amount * (1 - 1 / 1.12)) / 100
   }
 }
 const columns: QTableColumn[] = [
