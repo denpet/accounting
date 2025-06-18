@@ -19,6 +19,8 @@ class StockDiaryController extends Controller
         $where = ['datenew BETWEEN :from AND :to'];
         if ($params['product']) {
             $where[] = "p.id=:product";
+        } else {
+            unset($params['product']);
         }
         $where = "WHERE " . implode(" AND ", $where);
         $entries = DB::connection('unicenta')->select(

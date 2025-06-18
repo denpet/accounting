@@ -117,6 +117,7 @@
         class="col-6"
         :error="transactionStore.errors?.vat !== undefined"
         :error-message="transactionStore.errors?.vat?.toString()"
+        @keypress.space="onComputeVat"
       />
     </div>
     <q-item v-if="transactionStore.current.supplier_id !== null">
@@ -357,6 +358,12 @@ const onCreateSupplier = () => {
   })
 }
 
+const onComputeVat = () => {
+  if (transactionStore.current && transactionStore.current.amount) {
+    transactionStore.current.vat =
+      Math.round(100 * transactionStore.current.amount * (1 - 1 / 1.12)) * 100
+  }
+}
 const columns: QTableColumn[] = [
   {
     name: 'tin',
