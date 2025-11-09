@@ -1,0 +1,40 @@
+name: eden
+networks:
+  eden-network:
+    driver: bridge
+
+services:
+  php-fpm:
+    container_name: eden-php-fpm
+    build:
+      context: ..
+      dockerfile: ./docker/php-fpm/Dockerfile
+      target: production
+    restart: always
+    tty: true
+    networks:
+      - eden-network
+    labels:
+      io.portainer.accesscontrol.teams: eden
+
+  nginx:
+    container_name: eden-nginx
+    depends_on:
+      - php-fpm
+    build:
+      context: ..
+      dockerfile: ./docker/nginx/Dockerfile
+      target: production
+      args:
+        PRODUCT_API_URL: $PRODUCT_API_URL
+    restart: always
+    volumes:
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    tty: true
+    networks:
+      - eden-network
+    labels:
+      io.portainer.accesscontrol.teams: eden
+    ports:
+      - "8000:8000"

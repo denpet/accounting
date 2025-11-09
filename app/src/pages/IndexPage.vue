@@ -35,7 +35,7 @@ const transactionStore = useAccountingTransactionStore()
 const onCreateTransaction = () => {
   transactionStore.create(<TransactionObject>{
     id: null,
-    date: new Date().toLocaleDateString('sv'),
+    date: new Date().getFullYear().toString(),
     from_account_id: 1,
     to_account_id: 12,
     note: '',

@@ -18,6 +18,7 @@
       mask="####-##-##"
       :error="transactionStore.errors?.date !== undefined"
       :error-message="transactionStore.errors?.date?.toString()"
+      autofocus
     >
       <template v-slot:append>
         <q-icon name="event" class="cursor-pointer">
@@ -119,6 +120,18 @@
         :error-message="transactionStore.errors?.vat?.toString()"
         @keypress.space="onComputeVat"
       />
+    </div>
+    <div v-if="auth.current.id == 1" class="q-pa-md q-gutter-sm">
+      <q-btn label="To x624" @click="onTo624" />
+      <q-btn label="Repayment" @click="onRepayment" />
+      <q-btn label="Agoda" @click="onAgoda" />
+      <q-btn label="Booking.com" @click="onBookingCom" />
+      <q-btn label="Expedia" @click="onExpedia" />
+      <q-btn label="Own Booking" @click="onOwnBooking" />
+      <q-btn label="Tab!" @click="onTab" />
+      <q-btn label="Interest" @click="onInterest" />
+      <q-btn label="Interest Tax" @click="onInterestTax" />
+      <q-btn label="Withdrawal" @click="onWithdrawal" />
     </div>
     <q-item v-if="transactionStore.current.supplier_id !== null">
       <q-item-section side>
@@ -364,6 +377,105 @@ const onComputeVat = () => {
       Math.round(100 * transactionStore.current.amount * (1 - 1 / 1.12)) / 100
   }
 }
+
+const onAgoda = () => {
+  transactionStore.current!.vat =
+    Math.round(100 * (transactionStore.current!.amount ?? 0) * (1 - 1 / 1.12)) /
+    100
+  transactionStore.current!.from_account_id = 35
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = 'Agoda'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onBookingCom = () => {
+  transactionStore.current!.vat =
+    Math.round(100 * (transactionStore.current!.amount ?? 0) * (1 - 1 / 1.12)) /
+    100
+  transactionStore.current!.from_account_id = 63
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = 'Booking.com'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onExpedia = () => {
+  transactionStore.current!.vat =
+    Math.round(100 * (transactionStore.current!.amount ?? 0) * (1 - 1 / 1.12)) /
+    100
+  transactionStore.current!.from_account_id = 64
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = 'Expedia'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onOwnBooking = () => {
+  transactionStore.current!.vat =
+    Math.round(100 * (transactionStore.current!.amount ?? 0) * (1 - 1 / 1.12)) /
+    100
+  transactionStore.current!.from_account_id = 5
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = ''
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onTab = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 61
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = 'Tab!'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onTo624 = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 38
+  transactionStore.current!.to_account_id = 39
+  transactionStore.current!.note = 'To x624'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onRepayment = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 38
+  transactionStore.current!.to_account_id = 3
+  transactionStore.current!.note = 'Repayment'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onInterest = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 31
+  transactionStore.current!.to_account_id = 38
+  transactionStore.current!.note = 'Interest'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onInterestTax = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 38
+  transactionStore.current!.to_account_id = 53
+  transactionStore.current!.note = 'Interest'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
+const onWithdrawal = () => {
+  transactionStore.current!.vat = null
+  transactionStore.current!.from_account_id = 39
+  transactionStore.current!.to_account_id = 1
+  transactionStore.current!.note = 'Withdrawal'
+  transactionStore.current!.official_receipt = null
+  transactionStore.current!.supplier_id = null
+}
+
 const columns: QTableColumn[] = [
   {
     name: 'tin',

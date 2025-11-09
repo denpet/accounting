@@ -1,0 +1,39 @@
+name: eden-dev
+networks:
+  eden-network:
+    driver: bridge
+
+services:
+  php-fpm:
+    container_name: eden-dev-php-fpm
+    build:
+      context: ..
+      dockerfile: ./docker/php-fpm/Dockerfile
+      target: development
+    restart: always
+    tty: true
+    environment:
+      - COMPOSER_ALLOW_SUPERUSER=1
+    volumes:
+      - ../api/:/var/eden/api/
+    networks:
+      - eden-network
+
+  nginx:
+    container_name: eden-dev-nginx
+    depends_on:
+      - php-fpm
+    build:
+      context: ..
+      dockerfile: ./docker/nginx/Dockerfile
+      target: development
+    restart: always
+    volumes:
+      - ../app/:/var/eden/app/
+      - ./nginx/log:/var/log/nginx
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    tty: true
+    networks:
+      - eden-network
+    ports:
+      - "8000:8000"
