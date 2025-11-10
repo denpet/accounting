@@ -1,7 +1,7 @@
 FROM php:8.3-fpm AS base
 
-ARG USER_NAME=wroom
-ARG GROUP_NAME=wroom
+ARG USER_NAME=eden
+ARG GROUP_NAME=eden
 
 # Install system dependencies and PHP extensions required for Laravel + MySQL
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -14,6 +14,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nano \
         iputils-ping \
         telnet \
+        default-mysql-client \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
         sockets \

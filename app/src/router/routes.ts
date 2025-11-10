@@ -110,6 +110,15 @@ const routes: RouteRecordRaw[] = [
         ],
       },
       {
+        path: 'maintenance',
+        children: [
+          {
+            path: 'pool-reading',
+            component: () => import('pages/Maintenance/PoolReadingPage.vue'),
+          },
+        ],
+      },
+      {
         path: 'unicenta',
         children: [
           {

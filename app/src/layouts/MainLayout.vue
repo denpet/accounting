@@ -328,6 +328,25 @@
         </q-expansion-item>
         <q-expansion-item
           v-if="auth.current.role_id === 1"
+          icon="mdi-tools"
+          label="Maintenance"
+        >
+          <q-list class="q-pl-lg">
+            <q-item
+              to="/maintenance/pool-reading"
+              active-class="q-item-no-link-highlighting"
+            >
+              <q-item-section avatar>
+                <q-icon name="mdi-pool" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Pool reading</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-expansion-item>
+        <q-expansion-item
+          v-if="auth.current.role_id === 1"
           icon="mdi-account"
           label="User"
         >

@@ -6,6 +6,7 @@ use App\Http\Controllers\Accounting\ReportController;
 use App\Http\Controllers\Accounting\SupplierController;
 use App\Http\Controllers\Accounting\TransactionController;
 use App\Http\Controllers\Global\CountryController;
+use App\Http\Controllers\Maintenance\PoolReadingController;
 use App\Http\Controllers\Payroll\EmployeeController;
 use App\Http\Controllers\Payroll\TimeRecordController;
 use App\Http\Controllers\Unicenta\CategoryController;
@@ -77,6 +78,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('time-records/periods', [TimeRecordController::class, 'periods']);
         Route::get('time-records/{employeeId}/{from}', [TimeRecordController::class, 'showEmployeePeriod']);
         Route::apiResource('time-records', TimeRecordController::class);
+    });
+
+    Route::group(['prefix' => 'maintenance'], function () {
+        Route::apiResource('pool-readings', PoolReadingController::class);
     });
 
     Route::group(['prefix' => 'unicenta'], function () {

@@ -1,0 +1,37 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Server",
+      "request": "launch",
+      "type": "php",
+      "port": 9003,
+      "pathMappings": {
+        "/var/product/api": "${workspaceFolder}/api"
+      }
+    },
+    {
+      "name": "Debug Chrome",
+      "request": "launch",
+      "type": "chrome",
+      "url": "http://localhost:8080/",
+      "webRoot": "${workspaceFolder}/app/src",
+      "sourceMapPathOverrides": {
+        "webpack-internal:///src/*.vue": "${webRoot}/*.vue",
+        "webpack-internal:///sasse/*.vue": "${webRoot}/*.vue"
+      }
+    },
+    {
+      "name": "Debug Firefox",
+      "request": "launch",
+      "type": "firefox",
+      "reAttach": true,
+      "url": "http://localhost:8080/",
+      "webRoot": "${workspaceFolder}/app/src",
+      "tmpDir": "${workspaceFolder}/.vscode/firefox-tmp/"
+    }
+  ]
+}
