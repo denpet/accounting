@@ -14,7 +14,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nano \
         iputils-ping \
         telnet \
-        default-mysql-client \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
         sockets \
@@ -28,12 +27,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && echo 'post_max_size = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini
 
 RUN groupadd -g 1000 ${GROUP_NAME}
-RUN useradd ${USER_NAME} -u 1000 -g ${GROUP_NAME} -s /bin/bash
+RUN useradd ${USER_NAME} -u 1000 -g ${GROUP_NAME} -s /bin/bash -m
 RUN usermod -aG ${GROUP_NAME} ${USER_NAME}
+RUN ln -sf /bin/bash /bin/sh
 
 RUN mkdir -p /var/www/.local /var/www/.config /var/www/.cache /var/www/.pki
 RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/www
-RUN ln -sf /bin/bash /bin/sh
 
 WORKDIR /var/eden/api
 

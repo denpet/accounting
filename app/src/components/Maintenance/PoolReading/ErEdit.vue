@@ -83,12 +83,21 @@
         color="negative"
       />
     </q-toolbar>
+    <fieldset v-if="recommendations">
+      <legend>Recommendation</legend>
+      <ul>
+        <li v-for="recommendation in recommendations" :key="recommendation">
+          {{ recommendation }}
+        </li>
+      </ul>
+    </fieldset>
   </q-form>
 </template>
 
 <script setup lang="ts">
 import { useQuasar } from 'quasar'
 import { useMaintenancePoolReadingStore } from 'stores/maintenance/pool-reading'
+import { computed } from 'vue'
 
 const $q = useQuasar()
 
@@ -118,4 +127,107 @@ const onDestroy = () => {
     })
   })
 }
+
+const recommendations = computed(() => {
+  const recs: string[] = []
+
+  if (!poolReadingStore.current) {
+    return null
+  }
+
+  if (poolReadingStore.current.total_chlorine) {
+    if (poolReadingStore.current.total_chlorine > 0) {
+      const calHypo =
+        Math.round(poolReadingStore.current.total_chlorine * 0.23 * 100) / 10
+      recs.push(
+        `Calcium Hypochlorite: Add ${calHypo} kg to chock the pool (only monday).`,
+      )
+    }
+  } else {
+    recs.push('Enter total chlorine reading to get chocking recommendation.')
+  }
+
+  if (poolReadingStore.current.cyanuric_acid) {
+    if (poolReadingStore.current.cyanuric_acid < 50) {
+      recs.push('Trichlor Cyanuric Acid: Daily add 130 gr.')
+    } else {
+      recs.push('Calcium Hypochlorite: Daily add 170 gr.')
+    }
+  } else {
+    recs.push('Enter cyanuric acid reading to get chlorine recommendation.')
+  }
+
+  if (poolReadingStore.current.alkalinity && poolReadingStore.current.ph) {
+    if (
+      poolReadingStore.current.alkalinity < 120 &&
+      poolReadingStore.current.ph < 7.6
+    ) {
+      const maxSodaAsh = Math.min(
+        Math.round((7.6 - poolReadingStore.current.ph) * 0.68 * 50) / 10,
+        Math.round((120 - poolReadingStore.current.alkalinity) * 0.68 * 2) / 10,
+      )
+
+      const toFixAlkalinity =
+        poolReadingStore.current.alkalinity < 80
+          ? Math.round((100 - poolReadingStore.current.alkalinity) * 0.68 * 2) /
+            10
+          : 0
+
+      const toFixPh =
+        poolReadingStore.current.ph < 7.2
+          ? Math.round((7.4 - poolReadingStore.current.ph) * 0.68 * 50) / 10
+          : 0
+
+      if (Math.max(toFixAlkalinity, toFixPh) > maxSodaAsh) {
+        recs.push(`Soda Ash: Add ${maxSodaAsh} kg. Test water again tomorrow.`)
+      } else {
+        const sodaAsh = Math.max(toFixAlkalinity, toFixPh)
+        if (sodaAsh > 0) recs.push(`Soda Ash: Add ${sodaAsh} kg`)
+      }
+    } else if (
+      poolReadingStore.current.alkalinity > 80 &&
+      poolReadingStore.current.ph > 7.2
+    ) {
+      const maxMuriaticAcid = Math.min(
+        Math.round((poolReadingStore.current.ph - 7.2) * 0.68 * 50) / 10,
+        Math.round((poolReadingStore.current.alkalinity - 80) * 0.68 * 2) / 10,
+      )
+
+      const toFixAlkalinity =
+        poolReadingStore.current.alkalinity > 120
+          ? Math.round((poolReadingStore.current.alkalinity - 100) * 2.4) / 10
+          : 0
+
+      const toFixPh =
+        poolReadingStore.current.ph > 7.6
+          ? Math.round((poolReadingStore.current.ph - 7.4) * 1.2 * 25) / 10
+          : 0
+
+      if (Math.max(toFixAlkalinity, toFixPh) > maxMuriaticAcid) {
+        recs.push(
+          `Muriatic Acid: Add ${maxMuriaticAcid} l. Test water again tomorrow.`,
+        )
+      } else {
+        const muriaticAcid = Math.max(toFixAlkalinity, toFixPh)
+        if (muriaticAcid > 0) recs.push(`Muriatic Acid: Add ${muriaticAcid} l`)
+      }
+    }
+  } else {
+    recs.push(
+      'Enter alkalinity and pH readings to get soda ash or muriatic acid recommendation.',
+    )
+  }
+
+  if (poolReadingStore.current.hardness) {
+    if (poolReadingStore.current.hardness > 200) {
+      recs.push('Water: Use rainwater if available, otherwise municipal water.')
+    } else {
+      recs.push('Water: Use municipal water only')
+    }
+  } else {
+    recs.push('Water: Enter hardness reading to get recommendation.')
+  }
+
+  return recs.length > 0 ? recs : ['All readings are within optimal ranges.']
+})
 </script>
