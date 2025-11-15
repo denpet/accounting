@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Accounting;
 
 use App\Http\Controllers\RestController;
 use App\Models\Accounting\Account;
+use Illuminate\Support\Facades\Auth;
 
 class AccountController extends RestController
 {
@@ -23,7 +24,7 @@ class AccountController extends RestController
             "type",
             "name",
 
-        ]);
+        ])->where('role_id', '>=', Auth::user()->id == 1 ? 1 : 2);
         $this->filter($query, request()->all());
         foreach (static::$orderBy as $orderBy) {
             $query->orderBy($orderBy);
