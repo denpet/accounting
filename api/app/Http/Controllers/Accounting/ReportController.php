@@ -199,6 +199,7 @@ class ReportController extends Controller
                     from_account.id AS from_account_id,
                     to_account.type AS to_account_type,
                     to_account.id AS to_account_id,
+                    note,
                     amount
                 FROM eden.transactions t
                 JOIN accounts from_account ON t.from_account_id=from_account.id
@@ -216,6 +217,8 @@ class ReportController extends Controller
                     $result->cost[$transaction->to_account_id]['amount'] += $transaction->amount;
                 } elseif ($transaction->to_account_type == 'I') {
                     $result->income[$transaction->to_account_id]['amount'] -= $transaction->amount;
+                } else if ($transaction->from_account_id === 3 && $transaction->to_account_id === 62 && $transaction->note === 'Put up to emergency box') {
+                    $result->income[34]['amount'] += $transaction->amount;
                 }
             }
             $result->income = array_values($result->income);
