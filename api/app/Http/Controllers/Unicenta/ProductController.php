@@ -128,11 +128,8 @@ class ProductController extends RestController
                     'Bar Stock',
                     'Beer',
                     'Canned / Bottled',
-                    'Cigarettes',
                     'Fruit',
                     'Intern products',
-                    'Wine',
-                    'Fruit',
                     'Kitchen stock',
                     'Stock Items',
                     'Wine'

@@ -20,12 +20,13 @@ export type ProductErrors = {
 type ProductFilter = {
   name?: string
   category?: string
+  type?: string
 }
 
 export const useUnicentaProductStore = (id = '') =>
   defineStore(`unicenta/product${id}`, () => {
     const index = ref([])
-    const options = ref([])
+    const options: Ref<Array<{ value: string; label: string }>> = ref([])
     const current: Ref<ProductObject | undefined> = ref()
     const errors: Ref<ProductErrors | undefined> = ref()
     const filter: Ref<ProductFilter> = ref({})

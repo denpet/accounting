@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers'
 
 const format = {
-  number: (value: number, decimals = 0, showZero = false) => {
+  number: (value: number | null, decimals = 0, showZero = false) => {
     if (!showZero && !value) return ''
     if (value === null) return ''
     return new Intl.NumberFormat('en-US', {

@@ -104,12 +104,54 @@
       :error="transactionStore.errors?.note !== undefined"
       :error-message="transactionStore.errors?.note?.toString()"
     />
+    <q-list
+      v-if="
+        (transactionStore.current.to_account_id == 12 ||
+          transactionStore.current.to_account_id == 22) &&
+        transactionStore.current.id === null
+      "
+      bordered
+      class="q-pb-md bg-gray-2"
+    >
+      <q-item>
+        <q-item-section>Product</q-item-section>
+        <q-item-section>Quantity</q-item-section>
+        <q-item-section>Amount (incl VAT)</q-item-section>
+      </q-item>
+      <q-list>
+        <q-item v-for="(item, index) in purchase" :key="index">
+          <q-item-section>
+            <q-select
+              class="col-6 q-pr-xs"
+              v-model="item.id"
+              :options="productIdOptions"
+              map-options
+              emit-value
+              dense
+              use-input
+              input-debounce="0"
+              @filter="onPurchaseIdFilter"
+              @update:model-value="onPurchaseIdChange"
+            />
+          </q-item-section>
+          <q-item-section><q-input v-model="item.quantity" /></q-item-section>
+          <q-item-section
+            ><q-input
+              v-model="item.amount"
+              @update:model-value="onPurchaseAmountChange"
+          /></q-item-section>
+        </q-item>
+      </q-list>
+    </q-list>
     <div class="row">
       <q-input
         class="col-6 q-pr-xs"
-        label="Amount"
+        label="Amount (incl VAT)"
         v-model="transactionStore.current.amount"
-        :readonly="transactionStore.current.to_account_id=="
+        :readonly="
+          transactionStore.current.to_account_id == 12 ||
+          transactionStore.current.to_account_id == 22
+        "
         :error="transactionStore.errors?.amount !== undefined"
         :error-message="transactionStore.errors?.amount?.toString()"
       />
@@ -223,16 +265,28 @@ import {
 } from 'stores/accounting/transaction'
 import { useAccountingSupplierStore } from 'stores/accounting/supplier'
 import { useAccountingAccountStore } from 'stores/accounting/account'
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, Ref, ref } from 'vue'
 import { Cookies, QTableColumn } from 'quasar'
 import { useAuthStore } from 'src/stores/auth'
 import { format } from 'boot/format'
 import ErSupplierEdit from 'components/Accounting/Supplier/ErEdit.vue'
+import { useUnicentaProductStore } from 'src/stores/unicenta/product'
 
 const uploadApi = process.env.API + '/api/accounting/transactions'
 const transactionStore = useAccountingTransactionStore()
 const supplierStore = useAccountingSupplierStore()
 const auth = useAuthStore()
+const productStore = useUnicentaProductStore()
+const productIdOptions: Ref<Array<{ value: string; label: string }>> = ref([])
+productStore.fetchStockOptions().then(() => {
+  productIdOptions.value = <Array<{ value: string; label: string }>>[
+    { value: '', label: 'No Stock' },
+    ...productStore.options,
+  ]
+})
+const purchase: Ref<
+  Array<{ id: string | null; quantity: number | null; amount: number | null }>
+> = ref([{ id: null, quantity: null, amount: null }])
 
 const onCreate = () => {
   transactionStore.create(<TransactionObject>{
@@ -299,6 +353,14 @@ const onSubmit = () => {
     })
   } else {
     transactionStore.store().then(() => {
+      purchase.value.forEach((val) => {
+        if (val.id !== null && val.id !== '')
+          productStore.registerPurchase(
+            val.id,
+            val.quantity ?? 0,
+            val.amount ?? 0,
+          )
+      })
       transactionStore.current = undefined
     })
   }
@@ -488,4 +550,33 @@ const columns: QTableColumn[] = [
     sortable: true,
   },
 ]
+
+const onPurchaseIdChange = () => {
+  if (purchase.value[purchase.value.length - 1].id !== null) {
+    purchase.value.push({ id: null, quantity: null, amount: null })
+  }
+}
+
+const onPurchaseAmountChange = () => {
+  transactionStore.current!.amount = purchase.value.reduce(
+    (accumulator, currentValue) => {
+      console.log(+(currentValue.amount ?? 0))
+      return accumulator + +(currentValue.amount ?? 0)
+    },
+    0,
+  )
+}
+
+const onPurchaseIdFilter = (val: string, update) => {
+  const needle = val.toLowerCase()
+  update(() => {
+    productIdOptions.value = [
+      { value: '', label: 'No Stock' },
+      ...productStore.options,
+    ].filter(
+      (option: { label: string }) =>
+        option.label.toLowerCase().indexOf(needle) > -1,
+    )
+  })
+}
 </script>
