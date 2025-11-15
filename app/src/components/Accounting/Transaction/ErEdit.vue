@@ -109,6 +109,7 @@
         class="col-6 q-pr-xs"
         label="Amount"
         v-model="transactionStore.current.amount"
+        :readonly="transactionStore.current.to_account_id=="
         :error="transactionStore.errors?.amount !== undefined"
         :error-message="transactionStore.errors?.amount?.toString()"
       />
@@ -280,17 +281,11 @@ const toAccountOptions = computed(() => {
           13,
           15,
           19,
-          20,
           22,
           23,
-          28,
-          29,
+          25,
+          36,
           44,
-          48,
-          49,
-          51,
-          53,
-          54,
           62,
           transactionStore.current?.to_account_id ?? 0,
         ].includes(value.value)
