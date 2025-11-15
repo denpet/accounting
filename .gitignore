@@ -1,4 +1,2 @@
 testdata/*
 .idea
-**/package-lock.json
-**/composer.lock
