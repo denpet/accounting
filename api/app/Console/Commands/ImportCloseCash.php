@@ -60,10 +60,10 @@ class ImportCloseCash extends Command
                 $transaction['date'] = substr($closedCashRow->dateend, 0, 10);
 
                 switch ($closedCashRow->payment) {
-                    case 'bank':
-                        $transaction['note'] = "Deposit, ";
-                        $transaction['to_account_id'] = 2; // Bank
-                        break;
+                    // case 'bank':
+                    //     $transaction['note'] = "Deposit, ";
+                    //     $transaction['to_account_id'] = 2; // Bank
+                    //     break;
 
                     case 'ccard':
                         $transaction['note'] = "Credit card sales, ";
