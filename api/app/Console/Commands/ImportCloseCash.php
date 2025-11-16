@@ -39,18 +39,33 @@ class ImportCloseCash extends Command
                     closedcash.hostsequence,
                     closedcash.dateend,
                     payments.payment,
-                    SUM(payments.total) AS total
+                    SUM(
+                    	IF(
+                    		ticketlines.price IS NULL,
+                    		payments.total,
+                    		ticketlines.units * ticketlines.price * (1 + taxes.rate)
+                    	)
+                    ) AS total,
+                    CASE
+                    	WHEN products.category='d82a29aa-2703-423c-8e1f-67162a8018dc' THEN 'accommodation'
+                    	ELSE 'sales'
+                    END AS type
                 FROM unicentaopos.closedcash
                 JOIN unicentaopos.receipts on receipts.money=closedcash.money
                 JOIN unicentaopos.payments ON payments.receipt=receipts.id
+                LEFT JOIN unicentaopos.tickets ON tickets.id=receipts.id
+                LEFT JOIN unicentaopos.ticketlines ON tickets.id=ticketlines.ticket
+                LEFT JOIN unicentaopos.products ON products.id=ticketlines.product
+                LEFT JOIN unicentaopos.taxes ON taxes.id=ticketlines.taxid
                 WHERE closedcash.money NOT IN (SELECT id FROM eden.imported_closed_cash)
-                AND closedcash.dateend IS NOT NULL
+                	AND closedcash.dateend IS NOT NULL
                 GROUP BY closedcash.host,
                     closedcash.hostsequence,
                     closedcash.money,
                     closedcash.datestart,
                     closedcash.dateend,
-                    payments.payment
+                    payments.payment,
+                    type
                 ORDER BY closedcash.host,
                     closedcash.hostsequence"
             );
@@ -105,11 +120,11 @@ class ImportCloseCash extends Command
                 }
 
                 if ($transaction['to_account_id'] === 62) {
-                    $transaction['from_account_id'] = 3;
-                    $transaction['note'] = 'Put up to emergency box';
+                    $transaction['from_account_id'] = $closedCashRow->type === 'accommodation' ? 5 : 34;
+                    $transaction['note'] = "Put up to emergency box";
                     $offset = date('Y9', strtotime($transaction['date']));
                 } else {
-                    $transaction['from_account_id'] = 34;
+                    $transaction['from_account_id'] = $closedCashRow->type === 'accommodation' ? 5 : 34;
                     $transaction['note'] .= "$closedCashRow->host, $closedCashRow->hostsequence";
                     $offset = date('Y1', strtotime($transaction['date']));
                 }
