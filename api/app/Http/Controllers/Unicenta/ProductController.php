@@ -31,7 +31,6 @@ class ProductController extends RestController
                 c.name AS category_name,
                 ROUND(p.pricebuy * 1.12, 2) as pricebuy
             FROM products p
-            JOIN products_cat pc ON p.id=pc.product
             JOIN categories c ON p.category = c.id
             WHERE c.name in (
                     'Bar Stock',
@@ -115,7 +114,6 @@ class ProductController extends RestController
             "SELECT p.id AS value,
                 CONCAT(p.name, ' (', c.name, ')') AS label
             FROM products p
-            JOIN products_cat pc ON p.id=pc.product
             JOIN categories c ON p.category = c.id
             WHERE c.name in (
                     'Bar Stock',
@@ -141,7 +139,6 @@ class ProductController extends RestController
                 p.name,
                 c.name AS category_name
             FROM products p
-            JOIN products_cat pc ON p.id=pc.product
             JOIN categories c ON p.category = c.id
             WHERE c.name in (
                     'Bar Stock',
