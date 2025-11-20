@@ -213,13 +213,19 @@ export const useUnicentaProductStore = (id = '') =>
 
     const registerPurchase = async (
       id: string,
+      transaction_id: number,
       quantity: number,
       amount: number,
+      reason: string | null,
+      date: string,
     ) => {
       return api
         .put(`unicenta/products/register-purchase/${id}`, {
+          transaction: transaction_id,
           quantity: quantity,
           amount: amount,
+          reason: reason,
+          date: date,
         })
         .then(() => {
           Notify.create({

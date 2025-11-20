@@ -133,6 +133,11 @@
               @filter="onPurchaseIdFilter"
               @update:model-value="onPurchaseIdChange"
             />
+            <q-input
+              v-if="item.id === 'nostock'"
+              label="Reason"
+              v-model="item.reason"
+            />
           </q-item-section>
           <q-item-section><q-input v-model="item.quantity" /></q-item-section>
           <q-item-section
@@ -280,13 +285,18 @@ const productStore = useUnicentaProductStore()
 const productIdOptions: Ref<Array<{ value: string; label: string }>> = ref([])
 productStore.fetchStockOptions().then(() => {
   productIdOptions.value = <Array<{ value: string; label: string }>>[
-    { value: '', label: 'No Stock' },
+    { value: 'nostock', label: 'No Stock' },
     ...productStore.options,
   ]
 })
 const purchase: Ref<
-  Array<{ id: string | null; quantity: number | null; amount: number | null }>
-> = ref([{ id: null, quantity: null, amount: null }])
+  Array<{
+    id: string | null
+    reason: string | null
+    quantity: number | null
+    amount: number | null
+  }>
+> = ref([{ id: null, reason: null, quantity: null, amount: null }])
 
 const onCreate = () => {
   transactionStore.create(<TransactionObject>{
@@ -354,12 +364,16 @@ const onSubmit = () => {
   } else {
     transactionStore.store().then(() => {
       purchase.value.forEach((val) => {
-        if (val.id !== null && val.id !== '')
+        if (val.id) {
           productStore.registerPurchase(
             val.id,
+            transactionStore.current?.id ?? 0,
             val.quantity ?? 0,
             val.amount ?? 0,
+            val.reason,
+            transactionStore.current?.date ?? new Date().toISOString(),
           )
+        }
       })
       transactionStore.current = undefined
     })
@@ -415,9 +429,9 @@ const onCreateSupplier = () => {
     id: null,
     tin: isNaN(parseInt(supplierStore.filter.word ?? ''))
       ? null
-      : supplierStore.filter.word ?? null,
+      : (supplierStore.filter.word ?? null),
     name: isNaN(parseInt(supplierStore.filter.word ?? ''))
-      ? supplierStore.filter.word ?? ''
+      ? (supplierStore.filter.word ?? '')
       : '',
     address1: null,
     address2: null,
@@ -571,7 +585,7 @@ const onPurchaseIdFilter = (val: string, update) => {
   const needle = val.toLowerCase()
   update(() => {
     productIdOptions.value = [
-      { value: '', label: 'No Stock' },
+      { value: 'nostock', label: 'No Stock' },
       ...productStore.options,
     ].filter(
       (option: { label: string }) =>

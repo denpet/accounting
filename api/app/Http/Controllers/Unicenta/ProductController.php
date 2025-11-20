@@ -63,31 +63,50 @@ class ProductController extends RestController
     function registerPurchase($id)
     {
         $data = Request::validate([
+            'transaction' => "required|numeric",
             'quantity' => "required|numeric",
-            'amount' => "required|numeric"
+            'amount' => "required|numeric",
+            'reason' => "nullable|string",
+            'date' => "string",
         ]);
 
-        /* Update pricebuy */
-        $product = Product::find($id);
-        $product->pricebuy = ($data['amount'] / $data['quantity']) / 1.12;
-        $product->save();
+        DB::insert(
+            "INSERT INTO eden.purchases (transaction, date, product, units, amount, reason, user)
+            VALUES (:transaction, :date, :product, :units, :amount, :reason, :user)",
+            [
+                'transaction' => $data['transaction'],
+                'date' => $data['date'],
+                'product' => $id,
+                'units' => $data['quantity'],
+                'amount' => $data['amount'],
+                'reason' => $data['reason'] ?? null,
+                'user' => Auth::user()->name
+            ]
+        );
 
-        /* Update stock */
-        $stockCurrent = StockCurrent::find($id);
-        $stockCurrent->units += $data['quantity'];
-        $stockCurrent->save();
+        if ($id !== 'nostock') {
+            /* Update pricebuy */
+            $product = Product::find($id);
+            $product->pricebuy = ($data['amount'] / $data['quantity']) / 1.12;
+            $product->save();
 
-        /* Update stock diary */
-        StockDiary::create([
-            'id' => Str::uuid(),
-            'datenew' => Date('Y-m-d H:i:s'),
-            'reason' => StockDiary::REASON_IN_PURCHASE,
-            'location' => static::LOCATION,
-            'product' => $id,
-            'units' => $data['quantity'],
-            'price' => $product->pricebuy,
-            'appuser' => Auth::user()->name
-        ]);
+            /* Update stock */
+            $stockCurrent = StockCurrent::find($id);
+            $stockCurrent->units += $data['quantity'];
+            $stockCurrent->save();
+
+            /* Update stock diary */
+            StockDiary::create([
+                'id' => Str::uuid(),
+                'datenew' => $data['date'],
+                'reason' => StockDiary::REASON_IN_PURCHASE,
+                'location' => static::LOCATION,
+                'product' => $id,
+                'units' => $data['quantity'],
+                'price' => $product->pricebuy,
+                'appuser' => Auth::user()->name
+            ]);
+        }
     }
 
     function stockOptions()

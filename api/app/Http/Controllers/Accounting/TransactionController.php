@@ -22,7 +22,6 @@ class TransactionController extends RestController
         'tin' => 'nullable|string',
         'official_receipt' => 'nullable|string',
         'supplier_id' => 'nullable|exists:.eden.suppliers,id'
-
     ];
     protected static $indexColumns = ['id', 'date', 'note', 'amount', 'updated_at'];
     protected static $orderBy = ['date', 'id'];
