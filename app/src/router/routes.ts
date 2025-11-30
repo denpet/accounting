@@ -157,6 +157,11 @@ const routes: RouteRecordRaw[] = [
                 component: () => import('pages/Unicenta/PurchasePage.vue'),
               },
               {
+                path: 'cycle-count-sheet',
+                component: () =>
+                  import('pages/Unicenta/CycleCountSheetPage.vue'),
+              },
+              {
                 path: 'cycle-count',
                 component: () => import('pages/Unicenta/CycleCountPage.vue'),
               },

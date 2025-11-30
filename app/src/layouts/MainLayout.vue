@@ -252,6 +252,17 @@
                   </q-item-section>
                 </q-item>
                 <q-item
+                  to="/unicenta/product/cycle-count-sheet"
+                  active-class="q-item-no-link-highlighting"
+                >
+                  <q-item-section avatar>
+                    <q-icon name="mdi-tally-mark-5" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Cycle Count sheet</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item
                   to="/unicenta/product/cycle-count"
                   active-class="q-item-no-link-highlighting"
                 >

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Unicenta\ProductController;
 use App\Http\Controllers\Unicenta\Report\StatementOfAccountController;
 use Illuminate\Support\Facades\Route;
 
@@ -13,14 +14,5 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-
-Route::group(['middleware' => 'auth:sanctum'], function () {
-    Route::group(['prefix' => 'unicenta'], function () {
-        Route::group(['prefix' => 'reports'], function () {
-            Route::get('statement-of-account/{id}', [StatementOfAccountController::class, 'show']);
-        });
-    });
-});
 
 Route::view('{any}', 'app')->where('any', '.*');

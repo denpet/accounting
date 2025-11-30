@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Worksheet\PageSetup;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ProductController extends RestController
 {
@@ -130,6 +133,101 @@ class ProductController extends RestController
                 )
             ORDER BY c.name, p.name"
         );
+    }
+
+    function cycleCountExcel()
+    {
+        $category = Request::input("category", null);
+        $where = [];
+        $param = [];
+
+        if ($category) {
+            $where[] = "c.name=:category";
+            $param['category'] = $category;
+        } else {
+            $where[] = "c.name in (
+                    'Bar Stock',
+                    'Beer',
+                    'Canned / Bottled',
+                    'Fruit',
+                    'Intern products',
+                    'Kitchen stock',
+                    'Stock Items',
+                    'Wine'
+                )";
+        }
+
+        $where = $where ? "WHERE " . implode(" AND ", $where) : '';
+        $products = DB::connection('unicenta')->select(
+            "SELECT p.id,
+                p.name,
+                c.name AS category_name
+            FROM products p
+            JOIN categories c ON p.category = c.id
+            $where
+            ORDER BY c.name, p.name",
+            $param
+        );
+
+        $objPHPExcel = new Spreadsheet();
+        $objPHPExcel->getProperties()
+            ->setCreator("Eden Resort")
+            ->setLastModifiedBy("Eden Resort")
+            ->setTitle("Cycle count")
+            ->setSubject("Cycle count")
+            ->setDescription("Cycle count for Eden Resort.")
+            ->setKeywords("cycle count")
+            ->setCategory("Cycle Count");
+
+        /* Create employee sheet */
+        $objPHPExcel->setActiveSheetIndex(0);
+        $objPHPExcel->getActiveSheet()
+            ->getPageSetup()
+            ->setOrientation(PageSetup::ORIENTATION_PORTRAIT);
+        $objPHPExcel->getActiveSheet()->setTitle('CYCLE COUNT');
+        $objPHPExcel->getActiveSheet()
+            ->getColumnDimension('A')
+            ->setWidth(20);
+        $objPHPExcel->getActiveSheet()
+            ->getColumnDimension('B')
+            ->setWidth(50);
+        $objPHPExcel->getActiveSheet()
+            ->getColumnDimension('C')
+            ->setWidth(20);
+
+        $row = 1;
+        $objPHPExcel->getActiveSheet()->getRowDimension($row)->setRowHeight(30);
+        $objPHPExcel->getActiveSheet()->setCellValue("A$row", "Cycle Count");
+        $objPHPExcel->getActiveSheet()
+            ->getStyle("A1")
+            ->getFont()
+            ->setBold(true)
+            ->setSize(24);
+
+        $row++;
+        $objPHPExcel->getActiveSheet()->getRowDimension($row)->setRowHeight(30);
+        $objPHPExcel->getActiveSheet()->setCellValue("A$row", "Category")
+            ->setCellValue("B$row", "Product")
+            ->setCellValue("C$row", "Quantity");
+        $objPHPExcel->getActiveSheet()
+            ->getStyle("$row")
+            ->getFont()
+            ->setBold(true);
+
+        foreach ($products as $key => $product) {
+            $row++;
+            $objPHPExcel->getActiveSheet()->getRowDimension($row)->setRowHeight(30);
+            $objPHPExcel->getActiveSheet()->setCellValue("A{$row}", $product->category_name);
+            $objPHPExcel->getActiveSheet()->setCellValue("B{$row}", $product->name);
+            $objPHPExcel->getActiveSheet()->setCellValue("C{$row}", '___________________');
+        }
+        /* Create output */
+
+        header('Content-Type: application/vnd.ms-excel');
+        header('Content-Disposition: attachment; filename="cycle_count.xls"');
+        $writer = new Xlsx($objPHPExcel);
+        $writer->save("php://output");
+        die;
     }
 
     function cycleCountIndex()
