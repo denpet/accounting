@@ -14,6 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         nano \
         iputils-ping \
         telnet \
+        unzip \
+        7z \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
         sockets \
@@ -52,6 +54,7 @@ RUN chown -R ${USER_NAME}:${GROUP_NAME} /var/eden/api
 USER $USER_NAME
 
 FROM base AS development    
+COPY --from=composer /usr/bin/composer /usr/bin/composer
 RUN pecl install xdebug && \
     docker-php-ext-enable xdebug && \
     echo "xdebug.mode=develop,coverage,debug,profile" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini && \
