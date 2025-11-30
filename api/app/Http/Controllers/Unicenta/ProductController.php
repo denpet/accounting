@@ -187,13 +187,13 @@ class ProductController extends RestController
         $objPHPExcel->getActiveSheet()->setTitle('CYCLE COUNT');
         $objPHPExcel->getActiveSheet()
             ->getColumnDimension('A')
-            ->setWidth(20);
+            ->setWidth(15);
         $objPHPExcel->getActiveSheet()
             ->getColumnDimension('B')
-            ->setWidth(50);
+            ->setWidth(40);
         $objPHPExcel->getActiveSheet()
             ->getColumnDimension('C')
-            ->setWidth(20);
+            ->setWidth(17);
 
         $row = 1;
         $objPHPExcel->getActiveSheet()->getRowDimension($row)->setRowHeight(30);
