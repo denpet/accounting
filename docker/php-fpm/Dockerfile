@@ -1,28 +1,12 @@
-FROM php:8.3-fpm AS base
+FROM php:8.5-fpm AS base
 
 ARG USER_NAME=eden
 ARG GROUP_NAME=eden
 
 # Install system dependencies and PHP extensions required for Laravel + MySQL
 RUN apt-get update && apt-get install -y --no-install-recommends \
-        chromium \
-        nodejs \
-        npm \
-        zlib1g-dev \
-        libpng-dev \
-        libzip-dev \
-        nano \
-        iputils-ping \
-        telnet \
-        unzip \
-        7z \
     && docker-php-ext-install -j$(nproc) \
         pdo_mysql \
-        sockets \
-        gd \
-        zip \
-    && npm install -g puppeteer \
-    && npx puppeteer browsers install chrome \
     && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && echo 'memory_limit = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini \
     && echo 'upload_max_filesize = 2048M' >> /usr/local/etc/php/conf.d/docker-php-memlimit.ini \
