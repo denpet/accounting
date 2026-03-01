@@ -156,7 +156,7 @@ class ReconcileCash extends Command
 
     private function message($errors)
     {
-        Mail::to('info2@eden.ph')
+        Mail::to('info@eden.ph')
             ->send(new CashDiscrepancy($errors));
     }
 }
