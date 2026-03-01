@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('zkteco:sync')->everyTenMinutes();
         $schedule->command('unicenta:fix-account-discrepancy')->everyMinute();
         $schedule->command('unicenta:import-close-cash')->dailyAt('02:00');
+        $schedule->command('reconcile:cash')->dailyAt('11:00');
     }
 
     /**
