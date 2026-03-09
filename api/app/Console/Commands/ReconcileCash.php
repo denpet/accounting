@@ -54,7 +54,7 @@ class ReconcileCash extends Command
             if (DB::selectOne(
                 "SELECT COUNT(*) AS count
                 FROM cash
-                WHERE date BETWEEN '$yesterday 12:00' AND '$today 12:00'"
+                WHERE date = '$yesterday'"
             )->count === 0) {
                 $errors[] = "No cash reported $yesterday";
                 $this->message($errors);
