@@ -32,44 +32,49 @@ type AccountTransactionsFilter = {
 }
 
 export const useAccountingReportStore = defineStore('accounting/report', () => {
-  const today = new Date()
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-  const firstDayOfYear = new Date(today.getFullYear(), 0, 1)
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  const firstDayOfMonth = new Date(
+    yesterday.getFullYear(),
+    yesterday.getMonth(),
+    1,
+  )
+  const firstDayOfYear = new Date(yesterday.getFullYear(), 0, 1)
 
   const balance = ref()
   const balanceFilter: Ref<BalanaceFilter> = ref({
-    date: today.toLocaleDateString('sv'),
+    date: yesterday.toLocaleDateString('sv'),
   })
   const result = ref()
   const resultFilter: Ref<ResultFilter> = ref({
     from: firstDayOfMonth.toLocaleDateString('sv'),
-    to: today.toLocaleDateString('sv'),
+    to: yesterday.toLocaleDateString('sv'),
   })
 
   const ledger = ref()
   const ledgerFilter: Ref<LedgerFilter> = ref({
     from: firstDayOfMonth.toLocaleDateString('sv'),
-    to: today.toLocaleDateString('sv'),
+    to: yesterday.toLocaleDateString('sv'),
   })
 
   const transactions = ref()
   const transactionsFilter: Ref<TransactionsFilter> = ref({
     from: firstDayOfYear.toLocaleDateString('sv'),
-    to: today.toLocaleDateString('sv'),
+    to: yesterday.toLocaleDateString('sv'),
     hideWithOR: '0',
   })
 
   const accountTransactions = ref()
   const accountTransactionsFilter: Ref<AccountTransactionsFilter> = ref({
     from: firstDayOfMonth.toLocaleDateString('sv'),
-    to: today.toLocaleDateString('sv'),
+    to: yesterday.toLocaleDateString('sv'),
     details: 'yes',
   })
 
   const closedCash = ref()
   const closedCashFilter: Ref<AccountTransactionsFilter> = ref({
     from: firstDayOfMonth.toLocaleDateString('sv'),
-    to: today.toLocaleDateString('sv'),
+    to: yesterday.toLocaleDateString('sv'),
   })
 
   const fetchBalance = async () => {
